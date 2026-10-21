@@ -1,0 +1,45 @@
+// TEMPLATE (HOWTO.md): an invented system; keep the grammar, replace the facts.
+digraph example {
+graph [rankdir=TB, newrank=true, remincross=false, splines=line, nodesep=0.9, ranksep=0.9,
+       bgcolor="#ffffff", pad=0.444, fontname="Helvetica", fontsize=10, labelloc=t, labeljust=l,
+       // Title: name 18 pt bold; then diagram type · scope · version; then what it is and is not.
+       label=<<TABLE BORDER="0" CELLSPACING="8" CELLPADDING="0"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="18"><B>Example notes service</B></FONT></TD></TR><TR><TD ALIGN="LEFT">Container view · one small web application · v1.2</TD></TR><TR><TD ALIGN="LEFT">Repository architecture as described in the assignment. Not a production inventory.</TD></TR></TABLE>>];
+// One box size for all components: the widest and tallest content plus padding.
+// Two boxes side by side stay under about 660 pt, the width a GitHub page shows.
+node [shape=box, style=filled, width=3.75, height=1.2, fixedsize=true, fontname="Helvetica", fontsize=10,
+      margin="0.167,0.111", fontcolor="#111111", penwidth=1.2];
+edge [arrowsize=0.7, penwidth=1.4, color="#587b96"];
+
+// A box: name 12 pt bold, [type · technology], then one or two lines of what it does.
+// Fill and border say the category (key, left column); text says the same in words.
+user [fillcolor="#edf2fa", color="#7489a5", label=<<TABLE BORDER="0" CELLSPACING="4" CELLPADDING="0"><TR><TD WIDTH="230" ALIGN="LEFT"><FONT POINT-SIZE="12"><B>Reader</B></FONT></TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">[Person · web browser]</TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">Writes and searches personal notes</TD></TR></TABLE>>];
+mail [fillcolor="#f5f5f3", color="#8c8d87", label=<<TABLE BORDER="0" CELLSPACING="4" CELLPADDING="0"><TR><TD WIDTH="230" ALIGN="LEFT"><FONT POINT-SIZE="12"><B>Mail provider</B></FONT></TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">[External service · SMTPS]</TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">Delivers reminder mails</TD></TR></TABLE>>];
+
+// The frame: what belongs together (ownership, a host). Its label sits at the
+// bottom, where no arrow arrives, and says what the frame means.
+subgraph cluster_app {
+label="Notes application · one host\lFrame = deployment boundary, not one network\l"; labelloc=b; labeljust=l;
+color="#929a96"; margin=28;
+web [fillcolor="#edf5ef", color="#7a9783", label=<<TABLE BORDER="0" CELLSPACING="4" CELLPADDING="0"><TR><TD WIDTH="230" ALIGN="LEFT"><FONT POINT-SIZE="12"><B>notes-web</B></FONT></TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">[Container · Python, Starlette]</TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">Serves pages; checks the login</TD></TR></TABLE>>];
+worker [fillcolor="#edf5ef", color="#7a9783", label=<<TABLE BORDER="0" CELLSPACING="4" CELLPADDING="0"><TR><TD WIDTH="230" ALIGN="LEFT"><FONT POINT-SIZE="12"><B>notes-worker</B></FONT></TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">[Container · Python]</TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">Sends reminders on schedule</TD></TR></TABLE>>];
+db [fillcolor="#edf5ef", color="#7a9783", label=<<TABLE BORDER="0" CELLSPACING="4" CELLPADDING="0"><TR><TD WIDTH="230" ALIGN="LEFT"><FONT POINT-SIZE="12"><B>notes-db</B></FONT></TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">[Container · SQLite file]</TD></TR><TR><TD WIDTH="230" ALIGN="LEFT">Notes, users and reminder times</TD></TR></TABLE>>];
+{rank=same; web; worker;}
+web -> worker [style=invis, weight=100];   // layout only: keeps the row order
+}
+{rank=same; user; mail;}
+user -> mail [style=invis, weight=100];     // layout only
+
+// Relationships: caller -> callee, straight, centre to centre. No text on the
+// line; the line's colour and style say the protocol (key, middle column).
+user -> web;
+web -> db [color="#9b784b", style=dotted, penwidth=2];
+worker -> db [color="#9b784b", style=dotted, penwidth=2];
+// Caller -> callee even when the callee sits above: constraint=false keeps
+// "mail" on the top row without flipping the arrow (dir=back confuses badges.py).
+worker -> mail [constraint=false];
+
+// The key: three columns. Every colour, border, line style and arrowhead used
+// above has exactly one row here, and nothing else does.
+legend [shape=plain, style="", fixedsize=false, label=<<TABLE BORDER="0" CELLSPACING="24" CELLPADDING="0"><TR><TD VALIGN="TOP"><TABLE BORDER="0" CELLSPACING="8" CELLPADDING="0"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12"><B>Components</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT COLOR="#526c91">Pale blue box · person</FONT><BR ALIGN="LEFT"/><FONT COLOR="#57765f">Sage box · our containers</FONT><BR ALIGN="LEFT"/>Grey box · external service<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">Arrowheads point from caller to callee.<BR ALIGN="LEFT"/></TD></TR></TABLE></TD><TD VALIGN="TOP"><TABLE BORDER="0" CELLSPACING="8" CELLPADDING="0"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12"><B>Protocols</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT COLOR="#587b96"><B>Blue line · HTTPS / SMTPS</B></FONT><BR ALIGN="LEFT"/>Calls over TLS<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT"><FONT COLOR="#9b784b"><B>Dotted ochre line · SQLite file</B></FONT><BR ALIGN="LEFT"/>Local reads and writes<BR ALIGN="LEFT"/></TD></TR></TABLE></TD><TD VALIGN="TOP"><TABLE BORDER="0" CELLSPACING="8" CELLPADDING="0"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12"><B>Scope</B></FONT></TD></TR><TR><TD ALIGN="LEFT">Login provider and backups are<BR ALIGN="LEFT"/>outside this view.<BR ALIGN="LEFT"/></TD></TR></TABLE></TD></TR></TABLE>>];
+db -> legend [style=invis, weight=10000];               // layout only: key below the frame
+}

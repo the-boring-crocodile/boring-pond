@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700pt" height="680pt" viewBox="0 0 700 680">
+<!-- The Pond family, drawn for the README. -->
+<g font-family="Helvetica,sans-Serif" fill="#111111">
+<rect width="700" height="680" fill="#ffffff"/>
+<text x="25" y="40" font-size="18" font-weight="bold">The Pond family</text>
+<text x="25" y="60" font-size="10">Family picture · what you reach from your AI client, and what both sides share</text>
+<g fill="#edf5ef" fill-opacity="0.6" stroke="#7a9783" stroke-width="1.2">
+<rect x="25" y="90" width="310" height="260"/>
+<rect x="365" y="90" width="310" height="260"/>
+<rect x="160" y="300" width="380" height="200"/>
+</g>
+<text x="40" y="112" font-size="12" font-weight="bold" fill="#57765f">pondNT</text>
+<text x="40" y="126" font-size="10" fill="#57765f">Windows dev box</text>
+<rect x="65" y="145" width="230" height="44" fill="#edf2fa" stroke="#7489a5" stroke-width="1.2"/>
+<text x="77" y="164" font-size="12" font-weight="bold">You</text>
+<text x="77" y="178" font-size="10">with Copilot in Visual Studio</text>
+<g transform="translate(265,156) scale(0.8333)" fill="none" stroke="#7489a5" stroke-width="1.80" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a4 4 0 1 1 0 8a4 4 0 1 1 0-8z M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></g>
+<g transform="translate(40,215) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5"/></g>
+<text x="62" y="228" font-size="12" font-weight="bold">pondNT core</text>
+<text x="62" y="242" font-size="10">Files, commands, jobs</text>
+<g transform="translate(180,215) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5"/></g>
+<text x="202" y="228" font-size="12" font-weight="bold">pondNT D365</text>
+<text x="202" y="242" font-size="10">Build, sync, SQL, xref</text>
+<g transform="translate(40,259) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8.5l4 4v15H6z M14.5 2.5v4h4 M9 12h6 M9 15.5h6"/></g>
+<text x="62" y="272" font-size="12" font-weight="bold">Handbook</text>
+<text x="62" y="286" font-size="10">bootstrap.md, via the core</text>
+<text x="380" y="112" font-size="12" font-weight="bold" fill="#57765f">Pond site</text>
+<text x="380" y="126" font-size="10" fill="#57765f">one Linux host</text>
+<rect x="405" y="145" width="230" height="44" fill="#edf2fa" stroke="#7489a5" stroke-width="1.2"/>
+<text x="417" y="164" font-size="12" font-weight="bold">You</text>
+<text x="417" y="178" font-size="10">with Claude or ChatGPT</text>
+<g transform="translate(605,156) scale(0.8333)" fill="none" stroke="#7489a5" stroke-width="1.80" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a4 4 0 1 1 0 8a4 4 0 1 1 0-8z M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></g>
+<g transform="translate(380,215) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5"/></g>
+<text x="402" y="228" font-size="12" font-weight="bold">Crocodile</text>
+<text x="402" y="242" font-size="10">Signs clients in</text>
+<g transform="translate(520,215) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6h7l2 2.5h10v11.5h-19z"/></g>
+<text x="542" y="228" font-size="12" font-weight="bold">Ponds</text>
+<text x="542" y="242" font-size="10">One Unix account each</text>
+<g transform="translate(380,259) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8.5h13v11h-13z M12 4.5v4 M9.5 13.5v1 M14.5 13.5v1 M9.5 17h5 M3 13v3 M21 13v3"/></g>
+<text x="402" y="272" font-size="12" font-weight="bold">Pirates</text>
+<text x="402" y="286" font-size="10">Local AI agents</text>
+<g transform="translate(520,259) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8.5l4 4v15H6z M14.5 2.5v4h4 M9 12h6 M9 15.5h6"/></g>
+<text x="542" y="272" font-size="12" font-weight="bold">Handbook</text>
+<text x="542" y="286" font-size="10">Read first in every chat</text>
+<text x="175" y="320" font-size="10">Copilot calls them</text>
+<text x="175" y="332" font-size="10">with a key per service</text>
+<text x="380" y="320" font-size="10">Ponds and Pirates call them</text>
+<text x="380" y="332" font-size="10">with tokens the Crocodile issues</text>
+<text x="175" y="374" font-size="12" font-weight="bold" fill="#57765f">Services · MCP servers</text>
+<text x="175" y="388" font-size="10" fill="#57765f">Linux or Windows; no Pond needed; can run remote,</text>
+<text x="175" y="400" font-size="10" fill="#57765f">shared by several Ponds or models</text>
+<g transform="translate(175,419) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z M3.5 7.25 12 12l8.5-4.75 M12 12v9.5"/></g>
+<text x="197" y="432" font-size="12" font-weight="bold">Knowledge</text>
+<text x="197" y="446" font-size="10">Shared notebooks</text>
+<g transform="translate(355,419) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z M3.5 7.25 12 12l8.5-4.75 M12 12v9.5"/></g>
+<text x="377" y="432" font-size="12" font-weight="bold">Canvas</text>
+<text x="377" y="446" font-size="10">Drawings</text>
+<g transform="translate(175,461) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z M3.5 7.25 12 12l8.5-4.75 M12 12v9.5"/></g>
+<text x="197" y="474" font-size="12" font-weight="bold">Fishmarket</text>
+<text x="197" y="488" font-size="10">File handovers</text>
+<g transform="translate(355,461) scale(0.6667)" fill="none" stroke="#7a9783" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z M3.5 7.25 12 12l8.5-4.75 M12 12v9.5"/></g>
+<text x="377" y="474" font-size="12" font-weight="bold">D365 Sourcecache</text>
+<text x="377" y="488" font-size="10">Source search</text>
+<rect x="25" y="525" width="650" height="40" fill="#edf5ef" stroke="#7a9783" stroke-width="1.2"/>
+<text x="40" y="542" font-size="12" font-weight="bold">boring-pond-common</text>
+<text x="40" y="556" font-size="10">Shared packages underneath: registry, service kit, file core; on Linux also worker kit and deploy</text>
+<text x="25" y="602" font-size="12" font-weight="bold">Read the picture</text>
+<text x="25" y="620" font-size="10" fill="#526c91">Pale blue box, innermost: you, with your AI client.</text>
+<text x="25" y="632" font-size="10">Frame around it: what that client reaches.</text>
+<text x="25" y="644" font-size="10">Overlap: how each side reaches the services.</text>
+<text x="25" y="656" font-size="10">Pictograms repeat the type.</text>
+<text x="380" y="602" font-size="12" font-weight="bold">Scope and limits</text>
+<text x="380" y="620" font-size="10">Any client can also use a service directly.</text>
+<text x="380" y="632" font-size="10">Who calls whom: the site context and pondNT views.</text>
+</g>
+</svg>
