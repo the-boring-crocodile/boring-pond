@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The family check: every repository's own check, one after the other.
 
-    python scripts/check.py [--only crocodile pirates ...] [--python PY]
+    python scripts/check.py [--only crocodile pirates ...] [--python PY [PY ...] | --ci-pythons]
 
 Sibling checkouts live next to this repository. The family builds on one
 Common release, so every consumer's .common-ref names the same commit (mixed
@@ -11,8 +11,15 @@ Sibling branches and existing distributions stay untouched; the owner checks
 still enforce lock hashes. Common's own check runs on the current checkout.
 
 --common-wheels DIST uses an explicit distribution instead of building.
+
+Each product check (Common and the consumers) runs once per --python; the
+family's own checks and the Common build use the first. --ci-pythons takes
+the Pythons the public CI matrices use (CI_PYTHONS), found through uv; the
+public CI found what a 3.14-only local run missed (2026-10-31).
 """
 import argparse
+import os
+import shutil
 from contextlib import ExitStack, contextmanager
 import subprocess
 import sys
@@ -37,6 +44,30 @@ CHECKS = {
     "pondnt": ("boring-pondnt", "scripts/check.py"),
 }
 CONSUMERS = ("crocodile", "pirates", "services", "pondnt")
+PRODUCTS = ("common", *CONSUMERS)
+CI_PYTHONS = ("3.14", "3.12", "3.10")  # the products' CI matrices; first one runs the family checks
+
+
+def ci_pythons() -> list[str]:
+    """Interpreter paths for CI_PYTHONS, as uv finds them (UV or uv on PATH)."""
+    uv = os.environ.get("UV") or shutil.which("uv")
+    if not uv:
+        raise ValueError("--ci-pythons needs uv: put it on PATH or set UV=/path/to/uv")
+    found = []
+    for version in CI_PYTHONS:
+        run = subprocess.run([uv, "python", "find", "--no-project", version], capture_output=True, text=True)
+        if run.returncode:
+            raise ValueError(f"no Python {version} found by uv (uv python install {version})")
+        found.append(run.stdout.strip())
+    return found
+
+
+def label(name: str, python: str, pythons: list[str]) -> str:
+    if name not in PRODUCTS or len(pythons) == 1:
+        return name
+    version = subprocess.run([python, "-c", "import sys; print('%d.%d' % sys.version_info[:2])"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+    return f"{name}@{version}"
 
 
 def inputs(names: list[str], common_wheels: Path | None) -> tuple[str | None, str | None]:
@@ -83,9 +114,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--common-wheels", type=Path)
     parser.add_argument("--only", nargs="+", choices=list(CHECKS), default=list(CHECKS))
-    parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--python", nargs="+", default=[sys.executable])
+    parser.add_argument("--ci-pythons", action="store_true", help="the Pythons of the CI matrices")
     args = parser.parse_args()
     try:
+        pythons = ci_pythons() if args.ci_pythons else args.python
+        first = pythons[0]
         common_ref, services_ref = inputs(args.only, args.common_wheels)
         results = []
         with tempfile.TemporaryDirectory(prefix="pond-family-check-") as tmp, ExitStack() as stack:
@@ -98,24 +132,26 @@ def main() -> int:
                 else:
                     tree = stack.enter_context(worktree(FAMILY / "boring-pond-common", common_ref, tmp / "common"))
                     wheels = tmp / "common-dist"
-                    subprocess.run([args.python, str(tree / "scripts/build.py"), "--out", str(wheels)],
+                    subprocess.run([first, str(tree / "scripts/build.py"), "--out", str(wheels)],
                                    cwd=tree, check=True)
             services = None
             if services_ref is not None:
                 print(f"input pondnt: Services {services_ref}", flush=True)
                 services = stack.enter_context(worktree(FAMILY / "boring-services", services_ref, tmp / "services"))
             for name in args.only:
-                print(f"=== {name}", flush=True)
-                if name == "names" and not (FAMILY / "/".join(CHECKS[name])).is_file():
-                    print("pond/checks absent: skipped")
-                    continue
-                started = time.monotonic()
-                code = subprocess.run(command(name, args.python, wheels, services),
-                                      cwd=FAMILY / CHECKS[name][0]).returncode
-                results.append((name, code, time.monotonic() - started))
+                for python in (pythons if name in PRODUCTS else [first]):
+                    shown = label(name, python, pythons)
+                    print(f"=== {shown}", flush=True)
+                    if name == "names" and not (FAMILY / "/".join(CHECKS[name])).is_file():
+                        print("pond/checks absent: skipped")
+                        continue
+                    started = time.monotonic()
+                    code = subprocess.run(command(name, python, wheels, services),
+                                          cwd=FAMILY / CHECKS[name][0]).returncode
+                    results.append((shown, code, time.monotonic() - started))
         print("\n=== summary")
         for name, code, seconds in results:
-            print(f"  {name:11} {'passed' if code == 0 else f'FAILED ({code})'}  {seconds:.0f} s")
+            print(f"  {name:16} {'passed' if code == 0 else f'FAILED ({code})'}  {seconds:.0f} s")
         return 0 if all(code == 0 for _, code, _ in results) else 1
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         print(f"family check: FAILED: {error}", file=sys.stderr)

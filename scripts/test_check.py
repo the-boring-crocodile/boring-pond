@@ -41,7 +41,7 @@ assert version == Path('expected').read_text().strip(), (name, version)
 if name == 'boring-pondnt':
     assert (args.services_root / 'bundle').read_text() == 'accepted bundle'
 with open(os.environ['FAMILY_TEST_AUDIT'], 'a') as f:
-    f.write(json.dumps(['owner', name, version]) + '\\n')
+    f.write(json.dumps(['owner', name, version, args.python]) + '\\n')
 raise SystemExit(7 if os.environ.get('FAMILY_TEST_OWNER_FAIL') == name else 0)
 """
 
@@ -188,6 +188,24 @@ class FamilyCheckTests(unittest.TestCase):
         self.assertIn('FAILED (7)', output)
         self.assertEqual(len([e for e in self.events() if e[0] == 'owner']), 2)
         self.assert_untouched()
+
+    def test_products_run_once_per_python_family_checks_once(self):
+        result, output = self.run_check('--only', 'crocodile', 'pondnt', '--python', sys.executable, sys.executable)
+        self.assertEqual(result, 0)
+        owners = [e for e in self.events() if e[0] == 'owner']
+        self.assertEqual([(e[1], e[3]) for e in owners],
+                         [('boring-crocodile', sys.executable)] * 2 + [('boring-pondnt', sys.executable)] * 2)
+        self.assertEqual([e for e in self.events() if e[0] == 'build'], [['build', '0.7.10']])
+        version = '%d.%d' % sys.version_info[:2]
+        self.assertIn(f'crocodile@{version}', output)
+        self.assert_untouched()
+
+    def test_ci_pythons_without_uv_is_refused_before_effects(self):
+        with patch.dict(os.environ, {'UV': '', 'PATH': ''}):
+            result, output = self.run_check('--only', 'crocodile', '--ci-pythons')
+        self.assertEqual(result, 1)
+        self.assertIn('--ci-pythons needs uv', output)
+        self.assertEqual(self.events(), [])
 
 
 if __name__ == '__main__':

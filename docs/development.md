@@ -94,6 +94,17 @@ checks and prints one summary. Exit 0 means all of it passed. `--only` selects
 checks. `--common-wheels DIST` uses an explicit distribution instead of
 building; the consumers still enforce their wheel hashes.
 
+The component checks run on the runner's own Python unless told otherwise.
+`--python PY [PY ...]` runs each component check once per interpreter (the
+family's own checks and the Common build use the first); `--ci-pythons` takes
+the Pythons of the CI matrices, 3.14, 3.12 and 3.10, as `uv python find`
+reports them. Run that before a release: a 3.14-only pass has missed a test
+that hung on 3.12 and a real bug on 3.10.
+
+```bash
+python boring-pond/scripts/check.py --ci-pythons
+```
+
 For a documentation-only change, start with the document checks:
 
 ```bash
