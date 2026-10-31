@@ -18,7 +18,10 @@ Levels, one per diagram: **context** (the system, its users, other systems),
 **containers** (applications and data stores), **components** (inside one
 container), **code** (left to UML or the IDE). Supplementary: deployment and
 dynamic views. Building blocks: person, software system, container,
-component, relationship.
+component, relationship. A **container** is a runtime boundary (an
+application or data store that must run), not a Docker container and not a
+package; each queue or topic is its own container, never one "bus". C4 sees
+readability drop at about 20 elements; our working target is 5-9.
 
 The notation rules (c4model.com, "Notation"):
 
@@ -41,14 +44,20 @@ written down somewhere on the picture.
 
 ## Moody: what may carry meaning
 
+Moody separates *information-carrying* visual variables from *free* ones.
+Per diagram we decide which variables carry meaning; every other one stays
+constant, and that constant setting is the Swiss layer's job. Varying a
+free variable anyway is symbol excess.
+
 Nine principles for notations people read correctly:
 
 1. **Semiotic clarity** -- one symbol per concept, one concept per symbol. No
    *overload* (one colour meaning two things), no *redundancy* (two symbols
-   for one thing), no *excess* (symbols meaning nothing).
+   for one thing), no *excess* (symbols meaning nothing), no *deficit* (a
+   meaning with no symbol -- allowed on purpose when text carries it).
 2. **Perceptual discriminability** -- different meanings look clearly
-   different, ideally in more than one variable (colour *and* dash), and text
-   alone is the weakest difference.
+   different, ideally in more than one variable (colour *and* dash). Shape is
+   the strongest variable; label text alone is zero visual distance.
 3. **Semantic transparency** -- a symbol suggests its meaning (a person icon
    for a person); never one that suggests the wrong thing.
 4. **Complexity management** -- split into several diagrams, modules or
@@ -95,8 +104,9 @@ pictograms that repeat the element type in words, never replace it.
 - D. Moody, "The 'Physics' of Notations", IEEE TSE 35(6), 2009; principle
   definitions as summarised in
   [arXiv 2304.08654](https://arxiv.org/pdf/2304.08654) (Table II). The terms
-  overload/redundancy/excess and the limit of about six are from the paper as
-  remembered, not re-checked online.
+  overload/redundancy/excess/deficit, free variables and the limit of about
+  six are checked against secondary sources (the paper is paywalled); the
+  authoring project keeps longer references on all three schools.
 - [Wikipedia, "Visual variable"](https://en.wikipedia.org/wiki/Visual_variable) (Bertin)
 - [Wikipedia, "Swiss Style (design)"](https://en.wikipedia.org/wiki/Swiss_Style_(design))
   and [Lumen, "International Typographic Style"](https://courses.lumenlearning.com/suny-graphicdesign/chapter/1-6-international-typographic-style/)

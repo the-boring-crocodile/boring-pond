@@ -1,7 +1,5 @@
-# The family check: all six repositories side by side, as on a workstation
-# (scripts/check.py). Common is built from the commit the consumers'
-# .common-ref names; check_common_ref.py makes sure that is the Common
-# every lock pins, so the reproducible build matches the locks' hashes.
+# The family runner builds the one Common ref all consumers name and uses
+# pondNT's frozen Services ref in temporary detached worktrees.
 name: check
 on:
   push:
@@ -23,8 +21,6 @@ jobs:
           persist-credentials: false
           repository: ${{ github.repository_owner }}/boring-crocodile
           path: boring-crocodile
-      - id: common
-        run: echo "ref=$(cat boring-crocodile/.common-ref)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -41,6 +37,7 @@ jobs:
           persist-credentials: false
           repository: ${{ github.repository_owner }}/boring-services
           path: boring-services
+          fetch-depth: 0
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -49,9 +46,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.14"
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-      # Common's own check runs on its checked-out HEAD; the consumers get the
-      # wheels built from the ref they name, in a separate worktree.
-      - run: git -C boring-pond-common worktree add ../.common-at-ref ${{ steps.common.outputs.ref }}
-      - run: python .common-at-ref/scripts/build.py --out .common-dist
-      - run: python boring-pond/scripts/check.py --common-wheels .common-dist
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      # pondNT's browser tests drive Google Chrome. GitHub's Ubuntu 24.04 runners do
+      # not allow its sandbox (user namespaces), so the tests get a wrapper without it.
+      - run: |
+          printf '#!/bin/sh\nexec google-chrome --no-sandbox "$@"\n' > "$RUNNER_TEMP/chrome-nosandbox"
+          chmod +x "$RUNNER_TEMP/chrome-nosandbox"
+          echo "D365WEB_TEST_BROWSER=$RUNNER_TEMP/chrome-nosandbox" >> "$GITHUB_ENV"
+      - run: python boring-pond/scripts/check.py

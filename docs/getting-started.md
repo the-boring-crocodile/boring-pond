@@ -26,9 +26,10 @@ What you will have at the end:
 - A domain with DNS and a TLS certificate already working, and your own
   reverse proxy in front. The AI clients connect from their providers'
   clouds, so the domain must be reachable from the internet.
-- An account with Claude or ChatGPT, or both. Tested with Claude Pro and
-  Claude Max, and with ChatGPT Plus and ChatGPT Pro (custom connectors on the
-  web).
+- A client account that supports remote MCP connections with OAuth.
+  The walkthrough below uses Claude and ChatGPT; product plans and menus
+  can change. [Client setup](clients.md) explains registration choices and
+  how to verify the actual client you use.
 
 ## Don't panic
 
@@ -132,11 +133,13 @@ Crocodile), the home with `handbook/` (the Engineer's two files), `work/` and
 
 ## 4. Activate the site
 
-One decision first, because it cannot be changed later: **will this site
-ever have Pirates** (local agents your Ponds hand work to)? A site takes
-Pirates only if it was activated to accept them
-(`service_registration_enabled`). If you might want them, say yes now; it
-costs nothing until a Pirate is installed.
+This example enables **Pirates**, local agents your Ponds can hand work to,
+by setting `service_registration_enabled`. It does not install a Pirate.
+
+You can also enable reception later with `--site-render --guests POND`.
+That is a planned site change which can interrupt running work; follow
+[Crocodile operations](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/OPERATIONS.md#updating)
+when the site is ready for it.
 
 Write `~/site-inputs.json`, with your domain:
 
@@ -166,7 +169,7 @@ Activation writes the configuration (the Pond's home is its file root, so its
 file tools work at once), the systemd units and the Pond's approval secret,
 and starts the site.
 
-Sure you will never want Pirates? Then the wizard does the same without the
+To start without Pirate reception, the wizard does the same without the
 file and without the group: `sudo boring-crocodile-setup --site-wizard --apply`.
 It needs a terminal, asks for the public URL (an HTTPS origin), the address
 and port (keep `127.0.0.1` and `8503`) and the memory ceiling, shows what it
@@ -253,8 +256,10 @@ sudo cat /etc/boring-crocodile/credentials/kingfisher-approval-secret   # the Co
 In this example the Engineer works with Claude and the Consultant with ChatGPT.
 Mix and match as you like: both Ponds can use Claude, both ChatGPT, and a
 Pond can even be used from both at the same time, each in its own
-conversation. The steps are the same for any Pond; only the URL and its
-approval secret change.
+conversation. For either Pond, use its own URL and approval secret. Client products can
+differ in how they register with the issuer; use [client setup](clients.md)
+if the client asks for an ID or cannot start sign-in. The interface steps
+below are dated examples, not acceptance of every current client build.
 
 ### 8.1 Claude
 
