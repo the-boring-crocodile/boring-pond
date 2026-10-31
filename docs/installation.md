@@ -35,10 +35,10 @@ runs through.
 
 ## Decide first
 
-- **Will the site have Pirates?** A site with Pirates accepts guests
-  (`service_registration_enabled` in its activation file), and that is
-  chosen when the site is activated; a running site cannot be switched
-  later.
+- **Will the site have Pirates?** Enable guest reception with
+  `service_registration_enabled` during activation, or later through
+  `--site-render --guests POND`. The later change can interrupt running
+  work; use the [planned site-render procedure](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/OPERATIONS.md#updating).
 - **Which Ponds, for whom?** Each Pond is its own account and home: separate
   work and separate people get separate Ponds. Services and Pirates are
   granted to the Ponds that exist when they are added; a Pond added later is
@@ -50,6 +50,8 @@ runs through.
    the site, connect a client
    ([boring-crocodile INSTALL](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/INSTALL.md)). After
    this step an AI client can already work in the Pond.
+   [Client setup](clients.md) covers registered IDs, VS Code configuration
+   and version-specific OAuth observations.
 2. **More Ponds** on the same Crocodile: `--add-pond`, then `--site-extend`
    (Crocodile INSTALL, [Adding to a running site](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/INSTALL.md#adding-to-a-running-site)).
 3. **Services**, any of them: the Crocodile registers each one first

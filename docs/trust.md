@@ -68,9 +68,21 @@ a Pond further where you need to. The handbooks treat mail, web pages and
 notes from other Ponds as data, never as orders; that helps, it is not a
 guarantee.
 
-**A token leaks.** The holder has that one Pond for up to an hour, or for 14
-days with the refresh token. `boring-crocodile-admin oauth revoke --pond NAME
---all-clients` ends that at once.
+**A token leaks.** The holder can act within that token's scope until it
+expires or its grant is revoked. An access token lasts one hour; a refresh
+token can obtain new access and rotates on use. Revoke the affected client's
+grant promptly. To revoke every client's current grant in one Pond:
+
+```bash
+sudo boring-crocodile-admin oauth revoke --pond NAME --all-clients
+sudo boring-crocodile-admin oauth revoke --pond NAME --all-clients --apply --approve-digest DIGEST
+```
+
+The first command only shows a plan. Review its scope and use its digest in
+the second. If the store changes meanwhile, obtain a new plan. Revocation
+blocks further authenticated calls; it cannot undo work already dispatched.
+For a single affected client use `--client ID` instead of `--all-clients`
+([admin reference](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/ADMIN.md#oauth-commands)).
 
 **An approval secret leaks.** Anyone who also reaches your sign-in page can
 connect a client to that Pond. Replace the secret and revoke the Pond's

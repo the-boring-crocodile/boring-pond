@@ -6,9 +6,10 @@ COPYING.md. Software that is only installed on the way (pip and npm packages
 at build time, a Docker base image pulled on the target, d365fo.tools from the
 PowerShell Gallery) is not shipped by us and carries its own terms.
 
-Kept current with each release: the licence check refuses a package without
-its licence files, and the Canvas build refuses a bundled package or font
-without its notice.
+A release can run without a checkout or a connection to its dependencies'
+repositories. Its notices therefore travel with the software, so an operator
+can see what was shipped and under which terms. The build checks refuse
+missing notices; when dependencies change, their inventory must change too.
 
 | Shipped in | Third-party inside | Its notices |
 |---|---|---|
@@ -27,7 +28,7 @@ separate work next to our code, not linked into it:
   github.com/kieler/elkjs and on npm.
 - **DOMPurify** (MPL-2.0 or Apache-2.0): shipped unmodified.
 - **Excalifont**: Excalidraw states OFL-1.1, but the font file itself only
-  says "All rights reserved". Recorded in `canvas/frontend/notices/README.md`.
+  says "All rights reserved". Recorded in the maintained [Canvas notice inventory](https://github.com/the-boring-crocodile/boring-services/blob/main/canvas/frontend/notices/README.md).
 
 Left out on purpose: **Liberation Sans 1.05**, which Excalidraw registers for
 server-side rendering only. Its licence (GPL-2.0 with the Liberation font
@@ -36,8 +37,10 @@ in the browser's default font.
 
 ## Keeping it complete
 
-- Canvas's `frontend/build.mjs` refuses to build when a bundled package or a
-  font family has no notice.
+- Canvas's [`frontend/build.mjs`](https://github.com/the-boring-crocodile/boring-services/blob/main/canvas/frontend/build.mjs)
+  refuses to build when a bundled package or a font family has no notice.
+  Its [notice inventory](https://github.com/the-boring-crocodile/boring-services/blob/main/canvas/frontend/notices/README.md)
+  records the upstream sources for notices absent from the npm packages.
 - boring-deploy refuses to pack a CPython whose licence notices it does not
   keep; `scripts/python_notices.py` in Pond Common fetches them.
 - `reuse lint` on each repository (without its private material) checks that

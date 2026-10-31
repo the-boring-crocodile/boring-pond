@@ -16,6 +16,10 @@ GitHub each repository stands alone, so a link into a sibling is written as
 https://github.com/the-boring-crocodile/<repo>/blob/main/<path> (tree/ for a
 folder), and that path must exist in the sibling checkout, outside `pond/`.
 
+Our own records: each repository's private STATUS page (when present; a
+published copy has none) is a current-state page of at most STATUS_MAX_LINES
+lines, edited in place; dated text goes to its history.
+
 Without arguments it checks the family's sibling checkouts. Exit 0: clean;
 1: each hit printed as REPO/FILE:LINE: TEXT; 2: a repository is missing.
 """
@@ -31,6 +35,7 @@ PRIVATE = re.compile(r"(?<![\w/.-])pond/")
 OWNER = "the-boring-crocodile"
 FENCE = re.compile(r"^(```|~~~).*?^\1", re.M | re.S)
 RELATIVE = re.compile(r'(?:\]\(|(?:href|src|srcset)=")(?![a-z][a-z0-9+.-]*:|#|/)([^)"\s]+)')
+STATUS_MAX_LINES = 80
 GITHUB = re.compile(r"https://github\.com/" + OWNER + r"/(boring-[a-z-]+)/(?:blob|tree)/main/([^)#\s\"'>]*)")
 
 
@@ -71,6 +76,17 @@ def link_hits(repo: Path) -> list[str]:
     return found
 
 
+def status_hits(repo: Path) -> list[str]:
+    status = repo / "pond" / "STATUS.md"
+    if not status.exists():
+        return []
+    lines = len(status.read_text(encoding="utf-8").splitlines())
+    if lines > STATUS_MAX_LINES:
+        return [f"{repo.name}/pond/STATUS.md: {lines} lines, at most {STATUS_MAX_LINES}: "
+                "a current-state page; move dated text to pond/history/STATUS_HISTORY.md"]
+    return []
+
+
 def main(argv: list[str]) -> int:
     names = argv or REPOS
     missing = [n for n in names if not (FAMILY / n / ".git").exists()]
@@ -79,11 +95,14 @@ def main(argv: list[str]) -> int:
         return 2
     found = [h for n in names for h in hits(FAMILY / n)]
     links = [h for n in names for h in link_hits(FAMILY / n)]
-    for h in found + links:
+    long = [h for n in names for h in status_hits(FAMILY / n)]
+    for h in found + links + long:
         print(h)
     print(f"docs: {len(found)} path(s) into pond/" if found else "docs: no path into pond/")
     print(f"docs: {len(links)} broken or cross-repository link(s)" if links else "docs: every link resolves")
-    return 1 if found or links else 0
+    print(f"docs: {len(long)} STATUS page(s) too long" if long else
+          f"docs: every STATUS page within {STATUS_MAX_LINES} lines")
+    return 1 if found or links or long else 0
 
 
 if __name__ == "__main__":
