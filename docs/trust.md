@@ -30,12 +30,23 @@ Ponds puts each of their workers into its client group, so those Ponds share
 that group; give each Pond its own Pirate where they must stay apart. Setup
 never adds a Pond to `docker` or `sudo`; either would make it root in effect.
 
-Every command runs in its own systemd unit with memory, task and time
-limits, and by default with `ProtectSystem=strict`, `/home` read-only apart
+Every command runs in its own systemd unit with memory and task limits
+(its time limit is the task runner's, which the worker asks for), and by default with `ProtectSystem=strict`, `/home` read-only apart
 from the Pond's own tree, and `NoNewPrivileges`. A Pond you widen for host
 administration (`no_new_privileges = false` plus a sudo grant) runs without
 those restrictions; its limits stay. [PERMISSIONS](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/PERMISSIONS.md)
 says how to narrow or widen either.
+
+"Read-only" stops writing, not reading. A Pond reads whatever its account may
+read: `/usr`, `/opt`, `/etc/boring-crocodile/config.toml` (mode 0644, no
+secrets in it) and any other home whose mode or ACL lets others in. Setup
+makes each Pond's home 0700, so Ponds cannot look into each other's; your own
+home and other people's are exactly as open as their modes say. Check with
+`ls -ld /home/*` and `getfacl`; check a service's home and a Pirate's
+configuration folder the same way. The approval secrets sit in
+`/etc/boring-crocodile/credentials`, root's, mode 0700. To
+show a Pond nothing but its own home, PERMISSIONS has the systemd lever
+(`TemporaryFileSystem=/home` with `BindPaths=`).
 
 A Pond has the network its account has: the internet, and your local network
 too, including the router, the NAS and every service on it that does not ask
@@ -49,7 +60,7 @@ for a password. If that is more than you want, block it per Pond with
 | A Pond's **approval secret** | lets a client sign in to that Pond (five wrong tries end the attempt) | until you change it; root-only file |
 | **Access token** | that one Pond's URL (`/mcp/POND`), nothing else | one hour |
 | **Refresh token** | a new access token for the same Pond | 14 days, rotated on use |
-| **Service-call token**, minted by the controller | one Pond calling one service | 300 seconds; never valid as an access token |
+| **Service-call token**, minted by the controller | one Pond calling one service | one hour, renewed by the controller with 15 minutes left; never valid as an access token |
 | A pondNT **access key** | one pondNT server on 127.0.0.1 of one Windows machine | a year, renewed by setup |
 
 Tokens are stored only as SHA-256 hashes. A token is bound to the resource it
@@ -100,8 +111,8 @@ checked.
 **A service is compromised.** It has what its account has: its data, its
 configuration and the credentials in it, and whatever else that account may
 read; on Windows the general services run as SYSTEM, which is the whole
-machine. Tokens a Pond presents to it are valid only for that service, for 300
-seconds. A service that signs people in itself (its own OAuth or access keys)
+machine. Tokens a Pond presents to it are valid only for that service, for an
+hour. A service that signs people in itself (its own OAuth or access keys)
 holds those sign-ins too: access tokens for an hour, keys until they expire.
 
 **A Pirate misbehaves.** It acts as its own account with its own grants, and
@@ -130,5 +141,7 @@ account: [pondNT INSTALL](https://github.com/the-boring-crocodile/boring-pondnt/
 ## Not goals
 
 No sandbox inside a Pond, no per-command approval for `exec`, no root
-through MCP, no public multi-tenancy. A Pond site is for you and the people
+through MCP (unless you give a Pond host administration on purpose:
+[widening](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/PERMISSIONS.md#widening-host-administration-by-a-pond)),
+no public multi-tenancy. A Pond site is for you and the people
 and agents you give accounts to.

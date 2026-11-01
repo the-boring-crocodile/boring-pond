@@ -35,14 +35,6 @@ assistants do the rest and write down what they did.
   <img alt="A Pond site at a glance: you work with an AI client, which connects over MCP and sign-in through your reverse proxy to the Crocodile; the Crocodile hands each connection to its Pond, a Unix account; the Pond hands assignments to Pirates, local AI agents that register with it; the Pond and its Pirates call the services granted to them, and an AI client can also use a service directly through the proxy; services register with the Crocodile and have it check their tokens." src="docs/site-context.svg">
 </picture>
 
-On Windows, pondNT gives Visual Studio's Copilot the same kind of workspace
-on a development machine ([boring-pondnt](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/README.md)).
-
-Ferry can expose selected backends through four discovery and call tools,
-reducing the tool list a client sees. Each backend keeps its own operations
-and long-running results; Ferry forwards them.
-[How Ferry works](https://github.com/the-boring-crocodile/boring-services/blob/main/mcp-ferry/README.md).
-
 The Pond is the whole; Crocodile, pondNT, services and Pirates are its
 independently usable parts. Every MCP server in the family can sign people in
 by itself or trust a Crocodile ([how](https://github.com/the-boring-crocodile/boring-services/blob/main/docs/CONFIGURATION.md)).
@@ -68,8 +60,31 @@ account, not a sandbox, and the account is the boundary
 ([trust and boundaries](docs/trust.md)). Keep the working state in the Pond's
 files so the next conversation can recover it, whichever client you use
 ([keeping a Pond's memory](docs/in-practice.md#keeping-a-ponds-memory-your-part)).
-And root stays with you: the AI prepares the command, you read it and press
-Enter.
+And root stays with you, unless you give a Pond host administration on
+purpose: the AI prepares the command, you read it and press Enter.
+
+## Next to the coding agent you already have
+
+A coding agent in your terminal or editor, or an SSH session into a dev
+server, already puts an AI in a repository. A Pond adds what outlasts one
+session and one client:
+
+- **One server identity for every client.** Claude in the browser, ChatGPT
+  and Claude Code on a laptop each sign in to the same Pond and land in the
+  same Unix account, home and handbook. Whichever you open tomorrow reads
+  what the other one saved today.
+- **Work that outlives the conversation.** A test suite or a build started
+  as a job keeps running when the chat ends; the next conversation finds it
+  with `job_list` and reads its result while the result is kept.
+- **Shared services.** A drawing pushed to Canvas opens in your browser; a
+  lesson one Pond writes into Knowledge, another Pond finds.
+- **Independent workers.** Separate work or people get separate Ponds, each
+  its own account. A Pirate takes an assignment on another model, local or
+  hosted, while the conversation carries on.
+
+If you work in one repository on one machine and a session's memory is
+enough, the agent alone is simpler. The two combine: Claude Code connects to
+a Pond like any MCP server ([getting started](docs/getting-started.md#81-claude)).
 
 ## Two Ponds to start from
 
@@ -95,11 +110,11 @@ and the whole walk from download to a first conversation in
 
 ## Read on
 
-- **Start:** [getting started](docs/getting-started.md), two Ponds step by
-  step, from download to a first conversation.
+- **Start:** [getting started](docs/getting-started.md): one Pond, one
+  client and a recovered handoff first, then two Ponds step by step.
 - **Run it:** [installation](docs/installation.md),
   [updating](docs/updating.md), [client setup](docs/clients.md), and the [example site](docs/example-site.md)
-  whose names every example uses.
+  whose names every example uses; [our site](docs/our-site.md) is a real one.
 - **Understand it:** [architecture](docs/architecture.md),
   [trust and boundaries](docs/trust.md), the [glossary](docs/glossary.md).
 - **Why and how it was built:** [the story](docs/story.md),

@@ -34,7 +34,12 @@ an application container.
     docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --wizard --apply
     docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --site-wizard --apply
 
+When the site wizard asks for the local address, answer `0.0.0.0`: Docker
+forwards the published port to the container's own address, not to its
+loopback (the host side stays 127.0.0.1, as published above).
+
 Then the rest of the Crocodile's `docs/INSTALL.md` from step 4 (check and connect), with `docker exec pond`
-in front of each command. The site listens on the published loopback port;
+in front of each command and the commands' full path
+(`/opt/boring-crocodile/current/bin/boring-crocodile-admin`). The site listens on the published loopback port;
 a reverse proxy with TLS in front of it is the operator's, as on a host.
 Updates are the same deploy with the next artifact.

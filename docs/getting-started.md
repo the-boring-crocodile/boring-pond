@@ -14,7 +14,13 @@ What you will have at the end:
 | Pond | URL | Account | Handbook |
 |---|---|---|---|
 | `pond` (the first Pond is always called `pond`) | `https://crocodile-url.example.test/mcp/pond` | `beaver-user` | [the Steady Beaver](../handbooks/steady-beaver/HANDBOOK.md) |
-| `kingfisher` | `https://crocodile-url.example.test/mcp/kingfisher` | `kingfisher-user` | [the Tidy Kingfisher](../handbooks/tidy-kingfisher/HANDBOOK.md) |
+| `kingfisher` (optional, step 6) | `https://crocodile-url.example.test/mcp/kingfisher` | `kingfisher-user` | [the Tidy Kingfisher](../handbooks/tidy-kingfisher/HANDBOOK.md) |
+
+**The short route.** One Pond and one client first: steps 1 to 5, the first
+line of step 7, step 8.1 and step 9, then [first success](#first-success-a-project-a-handoff-a-fresh-conversation):
+the Pond reads a project, saves a handoff, and a fresh conversation picks it
+up. That proves the part that matters. The second Pond (step 6), ChatGPT
+(8.2), the diagram guide (step 10) and Pirates can follow any day.
 
 ## What you need
 
@@ -22,7 +28,7 @@ What you will have at the end:
   `python3` 3.11 or newer (Debian 12 or Ubuntu 24.04 and later; only for the
   deploy, the runtime brings its own Python). The commands below are for Debian and Ubuntu; step 10 uses `apt`.
   You need sudo to set it up; the Ponds themselves run as restricted users
-  without it.
+  without it. Memory, disk and costs: [installation](installation.md#what-you-need).
 - A domain with DNS and a TLS certificate already working, and your own
   reverse proxy in front. The AI clients connect from their providers'
   clouds, so the domain must be reachable from the internet.
@@ -31,11 +37,11 @@ What you will have at the end:
   can change. [Client setup](clients.md) explains registration choices and
   how to verify the actual client you use.
 
-## Don't panic
+## What setup will and will not do
 
 You are about to give an AI an account on your own machine, and that is as
 big as it sounds. So, before the first command, what this hour can and
-cannot do:
+cannot do (in short: don't panic):
 
 - **Nothing happens unseen.** Every setup and site change below prints its
   plan and a digest, and stops; you read the plan, then apply exactly that
@@ -60,36 +66,35 @@ cannot do:
 
 ## 1. Download and check
 
-You need two things:
-
-- the release archive `boring-crocodile-VERSION-linux-x86_64.tar.gz` and its
-  SHA-256, both from the
-  [Crocodile's releases](https://github.com/the-boring-crocodile/boring-crocodile/releases)
-  (VERSION: the release you pick, the newest unless you have a reason);
-- a copy of boring-pond (this repository): it holds the two handbooks and the
-  diagram guide.
+You need the Crocodile's release archive with its `.sha256` file, from the
+[Crocodile's releases](https://github.com/the-boring-crocodile/boring-crocodile/releases),
+and a copy of boring-pond (this repository): it holds the two handbooks and
+the diagram guide. `V` is the release; the one below is from the
+[tested set](updating.md#releases-and-versions), and the newest is on the
+releases page. Steps 1 and 2 are one block; run it in one shell:
 
 ```bash
-git clone https://github.com/the-boring-crocodile/boring-pond ~/boring-pond
-sha256sum ~/Downloads/boring-crocodile-VERSION-linux-x86_64.tar.gz   # compare with the published value
-```
-
-The commands below assume the archive is in `~/Downloads`; adjust the path
-if yours is elsewhere.
-
-## 2. Deploy the runtime
-
-The release brings its own `deploy`. It runs as root, so unpack it where
-only root can write:
-
-```bash
-sudo mkdir -p /root/releases
-sudo tar xzf ~/Downloads/boring-crocodile-VERSION-linux-x86_64.tar.gz -C /root/releases
-sudo install -d -m 0755 /opt/boring-crocodile
-sudo /root/releases/boring-crocodile-VERSION/deploy
+V=0.4.20
+f=boring-crocodile-$V-linux-x86_64.tar.gz
+u=https://github.com/the-boring-crocodile/boring-crocodile/releases/download/v$V
+mkdir -p ~/Downloads && cd ~/Downloads &&
+curl -fLO "$u/$f" && curl -fLO "$u/$f.sha256" &&
+sha256sum -c "$f.sha256" &&            # must print OK; if not, the block stops here
+git clone --depth 1 https://github.com/the-boring-crocodile/boring-pond ~/boring-pond &&
+sudo mkdir -p /root/releases &&
+sudo tar xzf "$f" -C /root/releases &&
+sudo install -d -m 0755 /opt/boring-crocodile &&
+sudo /root/releases/boring-crocodile-$V/deploy &&
 sudo ln -sfn /opt/boring-crocodile/current/bin/boring-crocodile-{setup,admin} /usr/local/bin/
 ```
 
+The checksum catches a damaged download. It does not prove who built the
+archive: it comes from the same page.
+
+## 2. Deploy the runtime
+
+The second half of the block. The release brings its own `deploy`, which
+runs as root, so the archive is unpacked where only root can write.
 `deploy` checks every file
 against the release's manifest, copies it to `/opt/boring-crocodile` with
 root-owned files, and installs the runtime and nothing else: no accounts, no
@@ -101,7 +106,8 @@ Details: Crocodile [INSTALL](https://github.com/the-boring-crocodile/boring-croc
 ## 3. The Engineer: create the first Pond
 
 Write `~/beaver.json`, naming the handbook folder in your copy of boring-pond
-(replace `/home/you` with your home; setup reads the folder as root and copies
+(replace `/home/you` with the folder you cloned it to, `/root` when you work
+as root; setup reads the folder as root and copies
 the two files into the Pond):
 
 ```json
@@ -125,7 +131,7 @@ sudo boring-crocodile-setup --config ~/beaver.json --apply --approve-digest DIGE
 ```
 
 DIGEST is the `plan_digest` the first command prints — the pattern from
-[Don't panic](#dont-panic), and the same for every change below.
+[what setup will and will not do](#what-setup-will-and-will-not-do), and the same for every change below.
 
 Setup creates the accounts `beaver-user` (the Pond) and `crocodile-mcp` (the
 Crocodile), the home with `handbook/` (the Engineer's two files), `work/` and
@@ -157,7 +163,9 @@ Write `~/site-inputs.json`, with your domain:
 }
 ```
 
-Create the group Pirates join, then activate (plan, then apply):
+Create the group Pirates join (their account joins it to register with the
+Pond's guest socket, which belongs to this group), then activate (plan, then
+apply):
 
 ```bash
 sudo groupadd --system pond-pirates
@@ -208,12 +216,14 @@ Engineer's URL (setup always names the first Pond `pond`), must answer `401`
 (it wants a sign-in):
 
 ```bash
-curl -si https://crocodile-url.example.test/mcp/pond | head -1
+curl -sSi https://crocodile-url.example.test/mcp/pond | head -1   # -S: a TLS or DNS error is shown
 ```
 
-## 6. The Consultant: a second Pond
+## 6. The Consultant: a second Pond (optional)
 
-Write `~/kingfisher.json` like step 3's file, with the Consultant's folder:
+One Pond is a complete site; skip this step if that is all you want, and
+skip the Consultant's lines in the steps after it. To add the Consultant,
+write `~/kingfisher.json` like step 3's file, with the Consultant's folder:
 
 ```json
 {
@@ -231,6 +241,7 @@ Create the Pond, then bring it into the running site. Each is a plan first,
 then an apply with that plan's own digest:
 
 ```bash
+# optional: the Consultant
 sudo boring-crocodile-setup --add-pond kingfisher --config ~/kingfisher.json
 sudo boring-crocodile-setup --add-pond kingfisher --config ~/kingfisher.json --apply --approve-digest DIGEST
 sudo boring-crocodile-setup --site-extend
@@ -248,22 +259,23 @@ it in a private terminal, never in a chat, a URL or a log:
 
 ```bash
 sudo cat /etc/boring-crocodile/credentials/approval-secret              # the Engineer (first Pond)
-sudo cat /etc/boring-crocodile/credentials/kingfisher-approval-secret   # the Consultant
+sudo cat /etc/boring-crocodile/credentials/kingfisher-approval-secret   # optional: the Consultant (step 6)
 ```
 
 ## 8. Connect your AI clients
 
-In this example the Engineer works with Claude and the Consultant with ChatGPT.
+In this example the Engineer works with Claude and the Consultant, if you
+added it, with ChatGPT.
 Mix and match as you like: both Ponds can use Claude, both ChatGPT, and a
 Pond can even be used from both at the same time, each in its own
 conversation. For either Pond, use its own URL and approval secret. Client products can
 differ in how they register with the issuer; use [client setup](clients.md)
 if the client asks for an ID or cannot start sign-in. The interface steps
-below are dated examples, not acceptance of every current client build.
+below are examples, not acceptance of every current client build.
 
 ### 8.1 Claude
 
-In claude.ai or the Claude app (steps as of 2026-10;
+In claude.ai or the Claude app (menu names change; the current steps are in
 [Anthropic's guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)):
 
 1. **Customize > Connectors**, then **+ Add > Add custom connector**. (Team
@@ -284,7 +296,8 @@ then `/mcp` to sign in.
 
 ### 8.2 ChatGPT
 
-In chatgpt.com, web only (as of 2026-10;
+Shown with the optional Consultant; for the Engineer, use its URL and secret.
+In chatgpt.com, web only (menu names change; the current steps are in
 [OpenAI's guide](https://help.openai.com/en/articles/12584461-developer-mode-apps-and-full-mcp-connectors-in-chatgpt)):
 
 1. **Plugins**, the plus button, **Add custom MCP server**. (Business: admins
@@ -310,13 +323,30 @@ connector's name: in Claude "bootstrap Steady Beaver", in ChatGPT "@Tidy
 Kingfisher bootstrap". The AI clients do not load a connector's context on their own; a
 plain "Hello" gets a plain hello back. The Pond reads its handbook and answers
 with its ready line, *The Steady Beaver is ready.* `('')##=`, then its
-defaults and one question: *what are we building first?* (the Consultant:
+defaults and one question: *what are we building first?* (the optional Consultant:
 *what do you want to think through or find out first?*). Answer it, and change
 any default you do not like.
 
-To check the handbook works: later, open a second, fresh conversation and ask
-for the bootstrap again. It should know its boundaries and where things stand
-without the first chat.
+## First success: a project, a handoff, a fresh conversation
+
+The AI forgets every conversation. What carries over is what the Pond wrote
+into its files, so this is the test worth passing first. In the Engineer's
+conversation:
+
+1. **Give it a project.** "Clone https://github.com/the-boring-crocodile/boring-pond
+   into `work/` and tell me how it is organised." The Pond has its account's
+   network and `git`; it clones, reads and answers from the files.
+2. **Save a handoff.** "Save where we are." The Engineer's handbook asks for
+   goal, state, open questions and the next step in the project's
+   `STATUS.md`. It says which files it wrote; read them yourself with
+   `sudo ls -R /home/beaver-user/work` and `sudo cat` on the file it named.
+3. **Recover.** Close the chat. In a new one: "bootstrap Steady Beaver", then
+   "where were we?" It should name the project and the next step without the
+   first chat. If it cannot, nothing was saved: ask what it wrote, and where.
+
+That is the whole habit ([keeping a Pond's memory](in-practice.md#keeping-a-ponds-memory-your-part)).
+From here: a second Pond (step 6), another client (8.2), the diagram guide
+(step 10), Pirates ([installation](installation.md)).
 
 ## 10. Give the Engineer the diagram guide
 
