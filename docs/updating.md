@@ -11,28 +11,69 @@ explains that command's checks, switch and rollback. This page is the order
 around them, using the [example site](example-site.md): the Crocodile, the
 Pirate `parrot` and the service `canvas`.
 
+## Releases and versions
+
+Each part is released on its own repository's releases page, with one
+archive for linux-x86_64 and a `.sha256` file beside it:
+
+| Part | Releases | Tag | Archive |
+|---|---|---|---|
+| Crocodile | [boring-crocodile](https://github.com/the-boring-crocodile/boring-crocodile/releases) | `v0.4.20` | `boring-crocodile-0.4.20-linux-x86_64.tar.gz` |
+| Pirates | [boring-pirates](https://github.com/the-boring-crocodile/boring-pirates/releases) | `v0.3.10` | `boring-pirates-0.3.10-linux-x86_64.tar.gz` |
+| Services | [boring-services](https://github.com/the-boring-crocodile/boring-services/releases) | `SERVICE-vX.Y.Z`, e.g. `canvas-v0.2.19` | `boring-SERVICE-X.Y.Z-linux-x86_64.tar.gz`, e.g. `boring-canvas-0.2.19-linux-x86_64.tar.gz` |
+| Common | [boring-pond-common](https://github.com/the-boring-crocodile/boring-pond-common/releases) | `v0.7.11` | wheels and `SHA256SUMS`; for development only |
+
+The services' tag names are `canvas`, `knowledge`, `fishmarket`,
+`sourcecache-d365` and `mcp-ferry`. A Linux site never installs Common by
+hand: each archive carries the Common packages it was built with, pinned by
+hash in its `requirements.lock`.
+
+The current release set, run together on our own host: Crocodile 0.4.20,
+Pirates 0.3.10, Canvas 0.2.19, Knowledge 0.2.15, Fishmarket 0.1.14,
+Sourcecache 0.1.18 and Ferry 0.1.4, all built on Common 0.7.11; pondNT 0.2.9
+on the Windows VM (its tunnel to the Pond still runs 0.2.8). That is a tested combination, not a rule: the parts need not
+share a version number. Nothing checks a combination for you; each part's
+CHANGELOG says what an upgrade needs from the others, and its deploy's
+`--check` refuses what it can see on the host itself (old configuration
+keys, a missing account).
+
+`sha256sum -c` against the `.sha256` file catches a damaged download. It does
+not prove who built the archive, since both come from the same page. The
+releases carry no signatures or GitHub artifact attestations yet.
+
 ## 1. Unpack each artifact as root
 
-Copy the artifacts to the host and check them against the release's
-checksums. Read their compatibility and data-change notes before scheduling
-the interruption. Then unpack each, as root, into a folder only root can write:
+Read the releases' compatibility and data-change notes before scheduling
+the interruption. Then download each artifact on the host, check it, and
+unpack it, as root, into a folder only root can write. Set the three
+versions (here the tested set above); run this and the next two steps in the
+same shell:
 
-    sudo mkdir -p /root/releases
-    sudo tar xzf boring-crocodile-VERSION-linux-x86_64.tar.gz -C /root/releases
-    sudo tar xzf boring-pirates-VERSION-linux-x86_64.tar.gz -C /root/releases
-    sudo tar xzf boring-canvas-VERSION-linux-x86_64.tar.gz -C /root/releases
+    CROCODILE=0.4.20 PIRATES=0.3.10 CANVAS=0.2.19
+    gh=https://github.com/the-boring-crocodile
+    get() { curl -fLO "$1" && curl -fLO "$1.sha256" && sha256sum -c "${1##*/}.sha256"; }
+    mkdir -p ~/Downloads && cd ~/Downloads
+    get $gh/boring-crocodile/releases/download/v$CROCODILE/boring-crocodile-$CROCODILE-linux-x86_64.tar.gz &&
+    get $gh/boring-pirates/releases/download/v$PIRATES/boring-pirates-$PIRATES-linux-x86_64.tar.gz &&
+    get $gh/boring-services/releases/download/canvas-v$CANVAS/boring-canvas-$CANVAS-linux-x86_64.tar.gz &&
+    sudo mkdir -p /root/releases &&
+    for f in boring-crocodile-$CROCODILE boring-pirates-$PIRATES boring-canvas-$CANVAS; do
+        sudo tar xzf $f-linux-x86_64.tar.gz -C /root/releases
+    done
+
+`get` downloads one archive and its checksum file and checks it; each must
+print OK, and if one does not, nothing is unpacked.
 
 The unpacked folder is code that runs as root. Use the artifact, not a folder
-a build left behind. Replace each `VERSION` below with that component's
-release version; the components need not share a version number.
+a build left behind. The components need not share a version number.
 
 ## 2. Check everything before changing anything
 
 Run the read-only preflight for every part first:
 
-    sudo /root/releases/boring-crocodile-VERSION/deploy --check
-    sudo /root/releases/boring-pirates-VERSION/deploy --check
-    sudo /root/releases/boring-canvas-VERSION/deploy --check
+    sudo /root/releases/boring-crocodile-$CROCODILE/deploy --check
+    sudo /root/releases/boring-pirates-$PIRATES/deploy --check
+    sudo /root/releases/boring-canvas-$CANVAS/deploy --check
 
 Without a HOME argument a deploy uses the part's line in
 `/etc/boring-pond/homes.json`, which its first install wrote.
@@ -53,9 +94,9 @@ When the releases' requirements allow it, update the Crocodile first:
 Pirates register with it and service checks reach it, so their checks then
 see the new controller.
 
-    sudo /root/releases/boring-crocodile-VERSION/deploy
-    sudo /root/releases/boring-pirates-VERSION/deploy
-    sudo /root/releases/boring-canvas-VERSION/deploy
+    sudo /root/releases/boring-crocodile-$CROCODILE/deploy
+    sudo /root/releases/boring-pirates-$PIRATES/deploy
+    sudo /root/releases/boring-canvas-$CANVAS/deploy
 
 Wait for each deploy to finish successfully before starting the next. For a
 running installation, that includes its start and smoke checks. An intentionally
@@ -98,8 +139,8 @@ downgrade rather than making old code read newer data.
 
 ## pondNT on Windows
 
-pondNT updates with its release's `setup.ps1`. Preview the intended services
-and Ferry layout before applying; retain the complete service selection on
-an existing installation. Follow
-[INSTALL](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md)
-for task ownership, client configuration and recovery.
+pondNT updates with its release's `setup.ps1`, run over the old installation
+with the complete service selection; going back is the old release's setup
+run the same way.
+[Update, and back](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md#10-update-and-back)
+is the recipe, step by step.

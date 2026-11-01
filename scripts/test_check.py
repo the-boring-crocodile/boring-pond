@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 import check as runner
 import check_common_ref as refs
+import check_docs as docs
 
 
 BUILD = """import argparse, json, os
@@ -206,6 +207,107 @@ class FamilyCheckTests(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertIn('--ci-pythons needs uv', output)
         self.assertEqual(self.events(), [])
+
+
+class ReleaseSetTests(unittest.TestCase):
+    """check_docs: versions pinned in copy-paste blocks follow updating.md's release set table."""
+
+    def setUp(self):
+        self.repo = Path(tempfile.mkdtemp()) / 'boring-pond'
+        (self.repo / 'docs').mkdir(parents=True)
+        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.repo.parent)], check=True))
+        (self.repo / 'docs' / 'updating.md').write_text(
+            '| Crocodile | x | `v1.2.3` | y |\n| Pirates | x | `v0.9.0` | y |\n| Services | x | e.g. `canvas-v0.2.1` | y |\n'
+            '\n    CROCODILE=1.2.3 PIRATES=0.9.0 CANVAS=0.2.1\n')
+        subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
+
+    def hits(self, page):
+        (self.repo / 'docs' / 'start.md').write_text(page)
+        subprocess.run(['git', 'add', '-A'], cwd=self.repo, check=True)
+        return docs.release_set_hits(self.repo)
+
+    def test_matching_pins_pass(self):
+        self.assertEqual(self.hits('```bash\nV=1.2.3\n```\n'), [])
+
+    def test_a_stale_pin_is_named(self):
+        found = self.hits('```bash\nV=1.2.2\n```\n')
+        self.assertEqual(len(found), 1)
+        self.assertIn('docs/start.md:2: V=1.2.2, the release set says 1.2.3', found[0])
+
+    def test_other_repositories_are_not_checked(self):
+        other = self.repo.parent / 'boring-crocodile'
+        other.mkdir()
+        self.assertEqual(docs.release_set_hits(other), [])
+
+
+class ServicesSetTests(unittest.TestCase):
+    """check_docs: boring-services' V=X S=NAME blocks follow the release set sentence in boring-pond."""
+
+    def setUp(self):
+        self.family = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.family)], check=True))
+        (self.family / 'boring-pond' / 'docs').mkdir(parents=True)
+        (self.family / 'boring-pond' / 'docs' / 'updating.md').write_text(
+            'The current release set: Crocodile 1.0.0,\nPirates 0.1.0, Canvas 0.2.19, Knowledge 0.2.15, Fishmarket\n0.1.14 and Ferry 0.1.3.\n')
+        self.repo = self.family / 'boring-services'
+        self.repo.mkdir()
+        subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
+        old, docs.FAMILY = docs.FAMILY, self.family
+        self.addCleanup(lambda: setattr(docs, 'FAMILY', old))
+
+    def hits(self, page):
+        (self.repo / 'README.md').write_text(page)
+        subprocess.run(['git', 'add', '-A'], cwd=self.repo, check=True)
+        return docs.services_set_hits(self.repo)
+
+    def test_matching_and_line_broken_versions_pass(self):
+        self.assertEqual(self.hits('    V=0.2.19 S=canvas D=x\n    V=0.1.14 S=fishmarket\n'), [])
+
+    def test_a_stale_service_pin_is_named(self):
+        found = self.hits('    V=0.2.18 S=canvas\n')
+        self.assertEqual(found, ['boring-services/README.md:1: canvas 0.2.18, the release set says 0.2.19'])
+
+    def test_a_service_missing_from_the_set_is_named(self):
+        self.assertIn('no sourcecache-d365 version', self.hits('    V=0.1.18 S=sourcecache-d365\n')[0])
+
+
+class DocAnchorTests(unittest.TestCase):
+    """check_docs: a link's #anchor must name a heading of the page it points at."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.tmp)], check=True))
+        docs.anchors.cache_clear()
+        self.other = self.tmp / 'boring-mailstack'
+        self.other.mkdir()
+        (self.other / 'README.md').write_text(
+            '# boring-mailstack\n\n## Try it with fictional mail\n\n## Notes\n\n## Notes\n'
+            '\n## [Using](docs/USING.md) `it`\n\n<a id="kept"></a>\n\n```\n## not a heading\n```\n')
+        self.page = self.tmp / 'page.md'
+
+    def hits(self, text):
+        self.page.write_text(text)
+        return docs.doc_link_hits(self.page, self.tmp, 'page.md', {'boring-mailstack': self.other})
+
+    def test_repository_anchor_must_name_a_readme_heading(self):
+        base = 'https://github.com/the-boring-crocodile/boring-mailstack'
+        self.assertEqual(self.hits(f'[a]({base}#try-it-with-fictional-mail)'), [])
+        self.assertIn('names no heading #try-it', self.hits(f'[a]({base}#try-it)')[0])
+
+    def test_repeats_links_in_headings_explicit_ids_and_fences(self):
+        base = 'https://github.com/the-boring-crocodile/boring-mailstack/blob/main/README.md'
+        for good in ('notes', 'notes-1', 'using-it', 'kept'):
+            self.assertEqual(self.hits(f'[a]({base}#{good})'), [], good)
+        for bad in ('notes-2', 'not-a-heading'):
+            self.assertEqual(len(self.hits(f'[a]({base}#{bad})')), 1, bad)
+
+    def test_same_page_and_relative_anchors(self):
+        (self.tmp / 'other.md').write_text('# Other\n\n## Step two\n')
+        self.assertEqual(self.hits('# Here\n\n[a](#here) [b](other.md#step-two)'), [])
+        self.assertEqual(len(self.hits('# Here\n\n[a](#gone) [b](other.md#step-three)')), 2)
+
+    def test_repository_without_checkout_is_not_judged(self):
+        self.assertEqual(self.hits('[a](https://github.com/the-boring-crocodile/unknown#x)'), [])
 
 
 if __name__ == '__main__':

@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1331pt" height="1215pt" viewBox="0 0 1331 1215">
+<rect x="0" y="0" width="1331" height="1215" fill="#121212"/>
+<text x="40" y="40" font-family="Helvetica,Arial,sans-serif" font-size="18" font-weight="bold" fill="#dfdfdf">Our site: everything the Pond uses</text>
+<text x="40" y="60" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Deployment view · Wald's home installation</text>
+<text x="40" y="76" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">A map of one real site, so more boxes than a template view. ★ and a dashed border: set up our own way.</text>
+<g class="cluster" id="net"><rect x="271" y="106" width="724" height="101" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="281" y="197" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">The internet</text>
+</g>
+<g class="cluster" id="ubahn"><rect x="14" y="239" width="993" height="806" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="24" y="1022" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">ubahn · home server · Ubuntu 26.04 · Core i7-7600U (2 cores, 4 threads), 32 GB</text>
+<text x="24" y="1035" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">a USB 3 SSD taped to the lid · Frame = one host: systemd and Docker</text>
+</g>
+<g class="cluster" id="svc"><rect x="516" y="656" width="479" height="231" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="526" y="877" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Services · Docker, own account each</text>
+</g>
+<g class="cluster" id="vm"><rect x="1043" y="513" width="230" height="266" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="1053" y="756" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">D365 dev VM · Hyper-V</text>
+<text x="1053" y="769" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">8 vCPU, 14 GB · D365 10.0.49</text>
+</g>
+<g class="cluster" id="desk"><rect x="1029" y="381" width="258" height="442" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="1039" y="800" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Wald's desktop · Windows 11</text>
+<text x="1039" y="813" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Ryzen 7 7800X3D, 32 GB, RTX 4070</text>
+</g>
+<g class="cluster" id="lan"><rect x="1015" y="106" width="286" height="741" fill="none" stroke="#656c69" stroke-width="1"/>
+<text x="1025" y="837" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">The home LAN</text>
+</g>
+<g class="edge" id="clients->caddy"><title>clients->caddy</title><path fill="none" stroke="#6f8da4" stroke-width="1.4" d="M143.0,190.0 L143.0,256.0"/><polygon fill="#6f8da4" stroke="#6f8da4" points="143.0,265.0 147.0,256.0 139.0,256.0"/></g>
+<g class="edge" id="caddy->croc"><title>caddy->croc</title><path fill="none" stroke="#6f8da4" stroke-width="1.4" d="M143.0,335.0 L143.0,386.0"/><polygon fill="#6f8da4" stroke="#6f8da4" points="143.0,395.0 147.0,386.0 139.0,386.0"/></g>
+<g class="edge" id="croc->ponds"><title>croc->ponds</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M205.4,465.0 L277.7,505.6"/><polygon fill="#9d7f58" stroke="#9d7f58" points="285.5,510.0 279.7,502.1 275.7,509.1"/></g>
+<g class="edge" id="ponds->github"><title>ponds->github</title><path fill="none" stroke="#689b94" stroke-width="1.4" d="M388.0,510.0 L388.0,184.0"/><polygon fill="#689b94" stroke="#689b94" points="388.0,175.0 384.0,184.0 392.0,184.0"/></g>
+<g class="edge" id="ponds->mailbox"><title>ponds->mailbox</title><path fill="none" stroke="#689b94" stroke-width="1.4" d="M455.1,510.0 L839.1,180.9"/><polygon fill="#689b94" stroke="#689b94" points="845.9,175.0 836.5,177.8 841.7,183.9"/></g>
+<g class="edge" id="ponds->funkturm"><title>ponds->funkturm</title><path fill="none" stroke="#689b94" stroke-dasharray="7,4" stroke-width="1.4" d="M491.0,512.3 L1084.7,194.2"/><polygon fill="#689b94" stroke="#689b94" points="1092.7,190.0 1082.8,190.7 1086.6,197.8"/></g>
+<g class="edge" id="ponds->em"><title>ponds->em</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M419.4,510.0 L518.7,327.9"/><polygon fill="#9d7f58" stroke="#9d7f58" points="523.0,320.0 515.2,326.0 522.2,329.8"/></g>
+<g class="edge" id="ponds->watt"><title>ponds->watt</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M491.0,537.0 L776.4,452.6"/><polygon fill="#9d7f58" stroke="#9d7f58" points="785.1,450.0 775.3,448.7 777.6,456.4"/></g>
+<g class="edge" id="em->mistral"><title>em->mistral</title><path fill="none" stroke="#9c80ab" stroke-width="1.4" d="M556.0,265.0 L610.1,182.5"/><polygon fill="#9c80ab" stroke="#9c80ab" points="615.0,175.0 606.7,180.3 613.4,184.7"/></g>
+<g class="edge" id="watt->ollama"><title>watt->ollama</title><path fill="none" stroke="#9c80ab" stroke-dasharray="7,4" stroke-width="1.4" d="M981.0,425.3 L1046.0,427.0"/><polygon fill="#9c80ab" stroke="#9c80ab" points="1055.0,427.2 1046.1,423.0 1045.9,431.0"/></g>
+<g class="edge" id="ponds->pondnt"><title>ponds->pondnt</title><path fill="none" stroke="#689b94" stroke-dasharray="7,4" stroke-width="1.4" d="M491.0,566.5 L1046.0,561.1"/><polygon fill="#689b94" stroke="#689b94" points="1055.0,561.0 1046.0,557.1 1046.0,565.1"/></g>
+<g class="edge" id="vs->pondnt"><title>vs->pondnt</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M1158.0,680.0 L1158.0,604.0"/><polygon fill="#9d7f58" stroke="#9d7f58" points="1158.0,595.0 1154.0,604.0 1162.0,604.0"/></g>
+<g class="edge" id="ponds->sim"><title>ponds->sim</title><path fill="none" stroke="#689b94" stroke-dasharray="7,4" stroke-width="1.4" d="M388.0,625.0 L388.0,661.0"/><polygon fill="#689b94" stroke="#689b94" points="388.0,670.0 392.0,661.0 384.0,661.0"/></g>
+<g class="edge" id="ponds->ferry"><title>ponds->ferry</title><path fill="none" stroke="#6f8da4" stroke-width="1.4" d="M285.5,625.0 L213.2,665.6"/><polygon fill="#6f8da4" stroke="#6f8da4" points="205.4,670.0 215.2,669.1 211.3,662.1"/></g>
+<g class="edge" id="ponds->canvas"><title>ponds->canvas</title><path fill="none" stroke="#6f8da4" stroke-width="1.4" d="M491.0,622.2 L546.8,651.8"/><polygon fill="#6f8da4" stroke="#6f8da4" points="554.8,656.0 548.7,648.2 545.0,655.3"/></g>
+<g class="edge" id="ferry->hamcp"><title>ferry->hamcp</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M143.0,740.0 L143.0,791.0"/><polygon fill="#9d7f58" stroke="#9d7f58" points="143.0,800.0 147.0,791.0 139.0,791.0"/></g>
+<g class="edge" id="ferry->ncmcp"><title>ferry->ncmcp</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M213.0,740.0 L325.0,796.0"/><polygon fill="#9d7f58" stroke="#9d7f58" points="333.0,800.0 326.7,792.4 323.2,799.6"/></g>
+<g class="edge" id="hamcp->ha"><title>hamcp->ha</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M143.0,855.0 L143.0,921.0"/><polygon fill="#9d7f58" stroke="#9d7f58" points="143.0,930.0 147.0,921.0 139.0,921.0"/></g>
+<g class="edge" id="ncmcp->nc"><title>ncmcp->nc</title><path fill="none" stroke="#9d7f58" stroke-dasharray="1.5,4" stroke-linecap="round" stroke-width="2" d="M388.0,855.0 L388.0,921.0"/><polygon fill="#9d7f58" stroke="#9d7f58" points="388.0,930.0 392.0,921.0 384.0,921.0"/></g>
+<g class="node" id="clients"><title>clients</title><rect x="40" y="120" width="206" height="70" fill="#1a1e25" stroke="#697c94" stroke-width="1.2"/>
+<text x="50" y="138" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Chat clients</text>
+<text x="50" y="153" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[Claude, ChatGPT]</text>
+<text x="50" y="168" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Wald, a coworker, a friend;</text>
+<text x="50" y="183" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">each signs in to one Pond</text>
+<path transform="translate(214,128) scale(0.917)" d="M3.5 4.5h17v11.5H10l-5 4v-4H3.5z M7.5 9h9 M7.5 12h6" fill="none" stroke="#697c94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="github"><title>github</title><rect x="285" y="120" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="295" y="138" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">GitHub</text>
+<text x="295" y="153" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[git, API · bot account]</text>
+<text x="295" y="168" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">the family's public repos</text>
+<path transform="translate(459,128) scale(0.917)" d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="mistral"><title>mistral</title><rect x="530" y="120" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="540" y="138" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Mistral API</text>
+<text x="540" y="153" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[model provider · HTTPS]</text>
+<text x="540" y="168" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Em's models; paid per token</text>
+<path transform="translate(704,128) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="mailbox"><title>mailbox</title><rect x="775" y="120" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="785" y="138" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Crocodile's mailbox</text>
+<text x="785" y="153" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[IMAP, SMTP · a mail host]</text>
+<text x="785" y="168" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">its own address, reads, sends</text>
+<path transform="translate(949,128) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="funkturm"><title>funkturm</title><rect x="1055" y="120" width="206" height="70" fill="#1b1b19" stroke="#747570" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="1065" y="138" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">funkturm</text>
+<text x="1065" y="153" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[ODROID-C4 · Armbian]</text>
+<text x="1065" y="168" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>Zigbee radio for HA;</text>
+<text x="1065" y="183" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">the Pond runs it over SSH</text>
+<path transform="translate(1229,128) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="caddy"><title>caddy</title><rect x="40" y="265" width="206" height="70" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="50" y="283" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Caddy</text>
+<text x="50" y="298" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[reverse proxy · Docker]</text>
+<text x="50" y="313" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">crocodile.walds.domain;</text>
+<text x="50" y="328" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">TLS for every site here</text>
+<path transform="translate(214,273) scale(0.917)" d="M3.5 8h14 M14.5 5l3 3-3 3 M20.5 16h-14 M9.5 13l-3 3 3 3" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="em"><title>em</title><rect x="435" y="265" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="445" y="283" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Mademoiselle Em</text>
+<text x="445" y="298" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[Pirate · own account]</text>
+<text x="445" y="313" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">diagrams, second opinions</text>
+<path transform="translate(609,273) scale(0.917)" d="M5.5 8.5h13v11h-13z M12 4.5v4 M9.5 13.5v1 M14.5 13.5v1 M9.5 17h5 M3 13v3 M21 13v3" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="croc"><title>croc</title><rect x="40" y="395" width="206" height="70" fill="#171e19" stroke="#5f7867" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="50" y="413" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Crocodile</text>
+<text x="50" y="428" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[MCP server · systemd]</text>
+<text x="50" y="443" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>listens on the LAN</text>
+<text x="50" y="458" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">address: Caddy is in Docker</text>
+<path transform="translate(214,403) scale(0.917)" d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="watt"><title>watt</title><rect x="775" y="395" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="785" y="413" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Captain Watt</text>
+<text x="785" y="428" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[Pirate · own account]</text>
+<text x="785" y="443" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">local, free experiments</text>
+<path transform="translate(949,403) scale(0.917)" d="M5.5 8.5h13v11h-13z M12 4.5v4 M9.5 13.5v1 M14.5 13.5v1 M9.5 17h5 M3 13v3 M21 13v3" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="ollama"><title>ollama</title><rect x="1055" y="395" width="206" height="70" fill="#1b1b19" stroke="#747570" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="1065" y="413" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Ollama</text>
+<text x="1065" y="428" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[GPU (RTX 4070)]</text>
+<text x="1065" y="443" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>Watt's model server,</text>
+<text x="1065" y="458" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">over the LAN, plain HTTP</text>
+<path transform="translate(1229,403) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="ponds"><title>ponds</title><rect x="285" y="510" width="206" height="115" fill="#171e19" stroke="#5f7867" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="295" y="528" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Five Ponds</text>
+<text x="295" y="543" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[Unix accounts · workers]</text>
+<text x="295" y="558" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">pond (the Crocodile), otter, tim,</text>
+<text x="295" y="573" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">brog (a coworker's),</text>
+<text x="295" y="588" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">pondering-toad (a friend's)</text>
+<text x="295" y="603" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>Crocodile, Otter, Em, Wald</text>
+<text x="295" y="618" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">read each other's shared folders</text>
+<path transform="translate(459,518) scale(0.917)" d="M2.5 6h7l2 2.5h10v11.5h-19z" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="pondnt"><title>pondnt</title><rect x="1055" y="525" width="206" height="70" fill="#171e19" stroke="#5f7867" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="1065" y="543" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">pondNT servers</text>
+<text x="1065" y="558" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[MCP servers · Windows]</text>
+<text x="1065" y="573" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>pond reaches them through</text>
+<text x="1065" y="588" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">an SSH tunnel the VM dials</text>
+<path transform="translate(1229,533) scale(0.917)" d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="ferry"><title>ferry</title><rect x="40" y="670" width="206" height="70" fill="#171e19" stroke="#5f7867" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="50" y="688" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Ferry</text>
+<text x="50" y="703" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[MCP gateway · Docker]</text>
+<text x="50" y="718" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf"><tspan fill="#c28c64">★ </tspan>in front of two MCP</text>
+<text x="50" y="733" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">servers of others</text>
+<path transform="translate(214,678) scale(0.917)" d="M3.5 8h14 M14.5 5l3 3-3 3 M20.5 16h-14 M9.5 13l-3 3 3 3" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="sim"><title>sim</title><rect x="285" y="670" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="295" y="688" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">ubuntu-sim</text>
+<text x="295" y="703" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[Incus VM · test machine]</text>
+<text x="295" y="718" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">releases tried here first</text>
+<path transform="translate(459,678) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="canvas"><title>canvas</title><rect x="530" y="670" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="540" y="688" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Canvas</text>
+<text x="540" y="703" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[service]</text>
+<text x="540" y="718" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">shared drawings</text>
+<path transform="translate(704,678) scale(0.917)" d="M6 2.5h8.5l4 4v15H6z M14.5 2.5v4h4 M9 12h6 M9 15.5h6" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="knowledge"><title>knowledge</title><rect x="775" y="670" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="785" y="688" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Knowledge</text>
+<text x="785" y="703" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[service]</text>
+<text x="785" y="718" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">notebook across Ponds</text>
+<path transform="translate(949,678) scale(0.917)" d="M6 2.5h8.5l4 4v15H6z M14.5 2.5v4h4 M9 12h6 M9 15.5h6" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="vs"><title>vs</title><rect x="1055" y="680" width="206" height="55" fill="#1a1e25" stroke="#697c94" stroke-width="1.2"/>
+<text x="1065" y="698" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Copilot in VS</text>
+<text x="1065" y="713" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[AI client · Visual Studio]</text>
+<text x="1065" y="728" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">uses pondNT on loopback</text>
+<path transform="translate(1229,688) scale(0.917)" d="M3.5 4.5h17v11.5H10l-5 4v-4H3.5z M7.5 9h9 M7.5 12h6" fill="none" stroke="#697c94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="hamcp"><title>hamcp</title><rect x="40" y="800" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="50" y="818" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">ha-mcp</text>
+<text x="50" y="833" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[MCP server · Docker]</text>
+<text x="50" y="848" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">tim may write, pond reads</text>
+<path transform="translate(214,808) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="ncmcp"><title>ncmcp</title><rect x="285" y="800" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="295" y="818" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">nextcloud-mcp</text>
+<text x="295" y="833" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[MCP server · Docker]</text>
+<text x="295" y="848" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">read-only: shared recipes</text>
+<path transform="translate(459,808) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="fishmarket"><title>fishmarket</title><rect x="530" y="800" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="540" y="818" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Fishmarket</text>
+<text x="540" y="833" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[service]</text>
+<text x="540" y="848" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">files to and from people</text>
+<path transform="translate(704,808) scale(0.917)" d="M6 2.5h8.5l4 4v15H6z M14.5 2.5v4h4 M9 12h6 M9 15.5h6" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="sourcecache"><title>sourcecache</title><rect x="775" y="800" width="206" height="55" fill="#171e19" stroke="#5f7867" stroke-width="1.2"/>
+<text x="785" y="818" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Sourcecache</text>
+<text x="785" y="833" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[service]</text>
+<text x="785" y="848" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">indexed D365 source</text>
+<path transform="translate(949,808) scale(0.917)" d="M9 6.5 3.5 12 9 17.5 M15 6.5 20.5 12 15 17.5" fill="none" stroke="#5f7867" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="ha"><title>ha</title><rect x="40" y="930" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="50" y="948" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Home Assistant</text>
+<text x="50" y="963" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[home automation]</text>
+<text x="50" y="978" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">the house</text>
+<path transform="translate(214,938) scale(0.917)" d="M12 8.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="node" id="nc"><title>nc</title><rect x="285" y="930" width="206" height="55" fill="#1b1b19" stroke="#747570" stroke-width="1.2"/>
+<text x="295" y="948" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Nextcloud</text>
+<text x="295" y="963" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">[files, calendars]</text>
+<text x="295" y="978" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">the family's cloud</text>
+<path transform="translate(459,938) scale(0.917)" d="M2.5 6h7l2 2.5h10v11.5h-19z" fill="none" stroke="#747570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="40" y="1085" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Boxes</text>
+<text x="40" y="1103" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#7b9682">Sage box · the Pond family</text>
+<text x="40" y="1117" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#7f95b5">Pale blue box · people's clients</text>
+<text x="40" y="1131" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Grey box · others' software</text>
+<text x="40" y="1145" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#c28c64">Dashed border, ★ · our own way</text>
+<text x="40" y="1159" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Arrow: caller to callee;</text>
+<text x="40" y="1173" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">onto a frame: each box inside</text>
+<text x="360" y="1085" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Lines</text>
+<text x="360" y="1103" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#6f8da4">Blue · MCP over HTTPS</text>
+<text x="360" y="1117" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#9d7f58">Dotted ochre · local: socket,</text>
+<text x="360" y="1131" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">loopback or a Docker network</text>
+<text x="360" y="1145" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#689b94">Teal · the Pond's own tools: git,</text>
+<text x="360" y="1159" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">mail, SSH, Incus; dashed = LAN</text>
+<text x="360" y="1173" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#9c80ab">Violet · model calls; dashed = LAN</text>
+<text x="680" y="1085" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#dfdfdf">Scope</text>
+<text x="680" y="1103" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Calls to services pass Caddy;</text>
+<text x="680" y="1117" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">drawn direct. Not drawn: the</text>
+<text x="680" y="1131" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">services' sign-in checks at the</text>
+<text x="680" y="1145" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">Crocodile, the mail stack,</text>
+<text x="680" y="1159" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#dfdfdf">nightly backups, package registries.</text>
+</svg>
