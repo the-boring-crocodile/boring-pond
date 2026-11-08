@@ -30,13 +30,14 @@ runs through.
   and commands: setup proposes a quarter of the host's RAM, at least 512 MiB
   and at most 8 GiB, and you can set another. A ceiling reserves nothing; it
   stops one Pond from taking the host. Size the host for the Ponds busy at
-  the same time, plus the services, Pirates and whatever else it runs. One
-  data point, not a minimum: [our host](our-site.md) runs five Ponds, two
-  Pirates and five service containers beside a full Home Assistant, a
-  Nextcloud and other unrelated services, comfortably, on 32 GB.
-- **Disk.** An installed Crocodile or Pirates release takes about 210 MB, and
-  each keeps its previous release beside it; services add their Docker
-  images. Then whatever the Ponds store.
+  the same time, plus the services, Pirates and whatever else it runs. Your
+  workload is a sizing input, not an installer-enforced minimum. Start with
+  one active Pond and measure memory before adding concurrent workers or
+  a local inference server.
+- **Disk.** Allow space for the downloaded archive, the installed release
+  and its previous release, plus service images and persistent state.
+  Ponds' projects, job output, source indexes and local model weights can
+  dominate those files; the installer supplies no universal disk minimum.
 - **Docker** only for services installed by their Linux deploy: Docker
   Engine with the Compose v2 plugin (Debian and Ubuntu: the packages
   `docker.io` and `docker-compose-v2`). The

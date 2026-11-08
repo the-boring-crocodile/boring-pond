@@ -74,7 +74,7 @@ the diagram guide. `V` is the release; the one below is from the
 releases page. Steps 1 and 2 are one block; run it in one shell:
 
 ```bash
-V=0.4.20
+V=0.4.21
 f=boring-crocodile-$V-linux-x86_64.tar.gz
 u=https://github.com/the-boring-crocodile/boring-crocodile/releases/download/v$V
 mkdir -p ~/Downloads && cd ~/Downloads &&
@@ -340,9 +340,12 @@ conversation:
    goal, state, open questions and the next step in the project's
    `STATUS.md`. It says which files it wrote; read them yourself with
    `sudo ls -R /home/beaver-user/work` and `sudo cat` on the file it named.
-3. **Recover.** Close the chat. In a new one: "bootstrap Steady Beaver", then
-   "where were we?" It should name the project and the next step without the
-   first chat. If it cannot, nothing was saved: ask what it wrote, and where.
+3. **Recover.** Close the chat. In a new conversation connected to the same
+   Pond, ask: "bootstrap Steady Beaver, read the project STATUS.md under
+   work/boring-pond, and tell me the next step." Compare the answer with the
+   file you inspected. If it misses the state, check the connection's Pond,
+   the file path and whether the new conversation read it before concluding
+   that nothing was saved.
 
 That is the whole habit ([keeping a Pond's memory](in-practice.md#keeping-a-ponds-memory-your-part)).
 From here: a second Pond (step 6), another client (8.2), the diagram guide

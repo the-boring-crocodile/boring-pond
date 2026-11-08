@@ -40,8 +40,11 @@ says how to narrow or widen either.
 "Read-only" stops writing, not reading. A Pond reads whatever its account may
 read: `/usr`, `/opt`, `/etc/boring-crocodile/config.toml` (mode 0644, no
 secrets in it) and any other home whose mode or ACL lets others in. Setup
-makes each Pond's home 0700, so Ponds cannot look into each other's; your own
-home and other people's are exactly as open as their modes say. Check with
+makes each Pond's home 0700. Later group or ACL changes can deliberately
+share it; your own home and other people's remain governed by their modes
+and ACLs. MCP file roots restrict file tools, while command reads also face
+the task unit's mount and namespace policy. A readable host path can still
+be hidden by that unit. Check with
 `ls -ld /home/*` and `getfacl`; check a service's home and a Pirate's
 configuration folder the same way. The approval secrets sit in
 `/etc/boring-crocodile/credentials`, root's, mode 0700. To
@@ -134,9 +137,13 @@ pondNT's servers listen on 127.0.0.1 only and each wants its own access key.
 That keeps other machines out; it does not separate pondNT from the person at
 the keyboard. The core and the D365 server run as that person, elevated (the
 D365 tools need administrator rights), and the general services run as SYSTEM.
-pondNT is meant for a single-developer, disposable development box. On a
-shared machine, set the services up separately with a reviewed service
-account: [pondNT INSTALL](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md).
+pondNT is meant for a single-developer, disposable development box. Core
+keys must go only to trusted callers: even its reader tools can read
+the writer keys in the installing person's profile. Core and the D365
+backends require that person's logon; a SYSTEM gateway at boot does not
+start them. The standard installer retains SYSTEM for general services and
+locks down its release folder. On a shared machine, independently review
+service identities and writable configuration before installing: [pondNT INSTALL](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md).
 
 ## Not goals
 
