@@ -3,12 +3,11 @@
 
     python scripts/check_docs.py [REPO ...] [--with NAME=PATH ...] [--doc FILE ...]
 
-Every repository keeps its own records in `pond/`, which is never released.
+Our own records live in the private checkout `boring-records` beside the
+products (until 2026-11-07 each repository's `pond/` folder), never released.
 A published page that links or points there leads nowhere, so this fails on
-any `pond/...` path in a tracked Markdown or SVG file outside `pond/`
-(product docs never link into pond/). `boring-pond/`
-and URL paths such as `/mcp/pond/` are not matches. Scripts may name
-`pond/checks`: they skip it when it is absent.
+any `pond/...` path (a link written before the move) in a tracked Markdown or
+SVG file. `boring-pond/` and URL paths such as `/mcp/pond/` are not matches.
 
 Links, in tracked Markdown outside `pond/` (fenced code blocks are not
 links): a relative link must resolve to a file in its own repository. On
@@ -152,13 +151,14 @@ def link_hits(repo: Path, checkouts: dict[str, Path] | None = None) -> list[str]
 
 
 def status_hits(repo: Path) -> list[str]:
-    status = repo / "pond" / "STATUS.md"
+    """The repository's private STATUS page, when the records checkout sits beside it."""
+    status = repo.parent / "boring-records" / repo.name / "STATUS.md"
     if not status.exists():
         return []
     lines = len(status.read_text(encoding="utf-8").splitlines())
     if lines > STATUS_MAX_LINES:
-        return [f"{repo.name}/pond/STATUS.md: {lines} lines, at most {STATUS_MAX_LINES}: "
-                "a current-state page; move dated text to pond/history/STATUS_HISTORY.md"]
+        return [f"boring-records/{repo.name}/STATUS.md: {lines} lines, at most {STATUS_MAX_LINES}: "
+                f"a current-state page; move dated text to boring-records/{repo.name}/history/STATUS_HISTORY.md"]
     return []
 
 

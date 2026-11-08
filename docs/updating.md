@@ -18,28 +18,39 @@ archive for linux-x86_64 and a `.sha256` file beside it:
 
 | Part | Releases | Tag | Archive |
 |---|---|---|---|
-| Crocodile | [boring-crocodile](https://github.com/the-boring-crocodile/boring-crocodile/releases) | `v0.4.20` | `boring-crocodile-0.4.20-linux-x86_64.tar.gz` |
-| Pirates | [boring-pirates](https://github.com/the-boring-crocodile/boring-pirates/releases) | `v0.3.10` | `boring-pirates-0.3.10-linux-x86_64.tar.gz` |
-| Services | [boring-services](https://github.com/the-boring-crocodile/boring-services/releases) | `SERVICE-vX.Y.Z`, e.g. `canvas-v0.2.19` | `boring-SERVICE-X.Y.Z-linux-x86_64.tar.gz`, e.g. `boring-canvas-0.2.19-linux-x86_64.tar.gz` |
-| Common | [boring-pond-common](https://github.com/the-boring-crocodile/boring-pond-common/releases) | `v0.7.11` | wheels and `SHA256SUMS`; for development only |
+| Crocodile | [boring-crocodile](https://github.com/the-boring-crocodile/boring-crocodile/releases) | `v0.4.21` | `boring-crocodile-0.4.21-linux-x86_64.tar.gz` |
+| Pirates | [boring-pirates](https://github.com/the-boring-crocodile/boring-pirates/releases) | `v0.3.11` | `boring-pirates-0.3.11-linux-x86_64.tar.gz` |
+| Services | [boring-services](https://github.com/the-boring-crocodile/boring-services/releases) | `SERVICE-vX.Y.Z`, e.g. `canvas-v0.2.20` | `boring-SERVICE-X.Y.Z-linux-x86_64.tar.gz`, e.g. `boring-canvas-0.2.20-linux-x86_64.tar.gz` |
+| Common | [boring-pond-common](https://github.com/the-boring-crocodile/boring-pond-common/releases) | `v0.7.13` | wheels and `SHA256SUMS`; for development only |
 
 The services' tag names are `canvas`, `knowledge`, `fishmarket`,
 `sourcecache-d365` and `mcp-ferry`. A Linux site never installs Common by
 hand: each archive carries the Common packages it was built with, pinned by
 hash in its `requirements.lock`.
 
-The current release set, run together on our own host: Crocodile 0.4.20,
-Pirates 0.3.10, Canvas 0.2.19, Knowledge 0.2.15, Fishmarket 0.1.14,
-Sourcecache 0.1.18 and Ferry 0.1.4, all built on Common 0.7.11; pondNT 0.2.9
-on the Windows VM (its tunnel to the Pond still runs 0.2.8). That is a tested combination, not a rule: the parts need not
-share a version number. Nothing checks a combination for you; each part's
-CHANGELOG says what an upgrade needs from the others, and its deploy's
-`--check` refuses what it can see on the host itself (old configuration
-keys, a missing account).
+The Linux release set is Crocodile 0.4.21, Pirates 0.3.11, Canvas 0.2.20,
+Knowledge 0.2.16, Fishmarket 0.1.15, Sourcecache 0.1.19 and Ferry 0.1.5,
+built on Common 0.7.13. pondNT 0.2.10 bundles the same service versions.
+The release records name these combinations:
+
+| Recorded combination | Common | Scope of evidence |
+|---|---|---|
+| Crocodile 0.4.21 + Pirates 0.3.11 + the Linux services above | 0.7.13 | Linux deploy smoke/registration and provider calls; each component's CHANGELOG describes its release |
+| pondNT 0.2.10 + the bundled service versions above | 0.7.13 | Native Windows suites, installer journey and live D365 checks of its last candidate, which differs only in version numbers; see pondNT's [evidence](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/EVIDENCE.md) |
+
+These are recorded combinations, not a requirement to give every part the
+same version number. pondNT's Services pin is its `.services-ref`, not the
+latest Services main branch.
+Crocodile declares Common packages `>=0.7.11,<0.8`; Pirates, the Services
+packages and pondNT declare their Common dependencies `>=0.7.10,<0.8`. Their release locks pin
+0.7.13. Dependency ranges alone do not establish that another combination
+has been exercised. Each part's CHANGELOG says what an upgrade needs from
+the others, and its deploy's `--check` refuses what it can inspect on the
+host (old configuration keys, a missing account).
 
 `sha256sum -c` against the `.sha256` file catches a damaged download. It does
-not prove who built the archive, since both come from the same page. The
-releases carry no signatures or GitHub artifact attestations yet.
+not authenticate the archive's origin, since both come from the same page.
+Any independent provenance verification is a separate step.
 
 ## 1. Unpack each artifact as root
 
@@ -49,7 +60,7 @@ unpack it, as root, into a folder only root can write. Set the three
 versions (here the tested set above); run this and the next two steps in the
 same shell:
 
-    CROCODILE=0.4.20 PIRATES=0.3.10 CANVAS=0.2.19
+    CROCODILE=0.4.21 PIRATES=0.3.11 CANVAS=0.2.20
     gh=https://github.com/the-boring-crocodile
     get() { curl -fLO "$1" && curl -fLO "$1.sha256" && sha256sum -c "${1##*/}.sha256"; }
     mkdir -p ~/Downloads && cd ~/Downloads

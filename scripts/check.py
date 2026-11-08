@@ -35,8 +35,8 @@ CHECKS = {
     "docs": ("boring-pond", "scripts/check_docs.py"),
     "licences": ("boring-pond", "scripts/check_licences.py"),
     "common-ref": ("boring-pond", "scripts/check_common_ref.py"),
-    # Private names in any product tree; pond/checks is absent from a published copy.
-    "names": ("boring-pond", "pond/checks/check_names.py"),
+    # Private names in any product tree; the private records checkout beside the products holds it.
+    "names": ("boring-records", "boring-pond/checks/check_names.py"),
     "common": ("boring-pond-common", "scripts/check.py"),
     "crocodile": ("boring-crocodile", "scripts/check.py"),
     "pirates": ("boring-pirates", "scripts/check.py"),
@@ -143,7 +143,7 @@ def main() -> int:
                     shown = label(name, python, pythons)
                     print(f"=== {shown}", flush=True)
                     if name == "names" and not (FAMILY / "/".join(CHECKS[name])).is_file():
-                        print("pond/checks absent: skipped")
+                        print("boring-records absent: skipped")
                         continue
                     started = time.monotonic()
                     code = subprocess.run(command(name, python, wheels, services),

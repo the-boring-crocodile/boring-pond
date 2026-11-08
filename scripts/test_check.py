@@ -173,7 +173,7 @@ class FamilyCheckTests(unittest.TestCase):
     def test_names_check_is_skipped_without_private_records(self):
         result, output = self.run_check('--only', 'names')
         self.assertEqual(result, 0)
-        self.assertIn('pond/checks absent: skipped', output)
+        self.assertIn('boring-records absent: skipped', output)
 
     def test_build_failure_cleans_worktree_and_does_not_run_owner(self):
         with patch.dict(os.environ, FAMILY_TEST_BUILD_FAIL='0.7.10'):
