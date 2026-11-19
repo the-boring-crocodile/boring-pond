@@ -25,8 +25,8 @@ Say it once, up front: all of it — the code, the tests, the diagrams and
 these docs — was written by AI (OpenAI's models and Anthropic's Claude),
 working in Ponds: accounts on Wald's machine, exactly like the ones this
 project gives you. Wald decided what to build, tested it, ran it and had the
-last word; he holds root, and nothing that needed it ran without him. The
-assistants do the rest and write down what they did.
+last word. Root on the Linux host stayed with him. The assistants do the
+rest and write down what they did.
 [Why it exists](docs/story.md) has the decisions and who made them;
 [one release, one evening](docs/case-study.md) shows a working day.
 
@@ -83,8 +83,8 @@ session and one client:
   hosted, while the conversation carries on.
 
 If you work in one repository on one machine and a session's memory is
-enough, the agent alone is simpler. The two combine: Claude Code connects to
-a Pond like any MCP server ([getting started](docs/getting-started.md#81-claude)).
+enough, the agent alone is simpler. For Claude Code, use the
+[registered-client path](docs/clients.md#claude-code-with-a-registered-client).
 
 ## Two Ponds to start from
 
@@ -104,17 +104,18 @@ Inside, each handbook has a character of its own (the Engineer's is the
 Steady Beaver, the Consultant's the Tidy Kingfisher), which a Pond keeps or
 renames as it becomes yours.
 
-Install one when you create the Pond: [sample Ponds](handbooks/README.md),
+The Crocodile release ships all three choices; setup offers them directly.
+Choose one when you create the Pond: [sample Ponds](handbooks/README.md),
 and the whole walk from download to a first conversation in
 [getting started](docs/getting-started.md).
 
 ## Read on
 
 - **Start:** [getting started](docs/getting-started.md): one Pond, one
-  client and a recovered handoff first, then two Ponds step by step.
+  client and a recovered handoff first; use the task pages for later additions.
 - **Run it:** [installation](docs/installation.md),
   [updating](docs/updating.md), [client setup](docs/clients.md), and the [example site](docs/example-site.md)
-  whose names every example uses; [our site](docs/our-site.md) is a real one.
+  whose names every example uses; [our site](docs/our-site.md) describes how we use those parts.
 - **Understand it:** [architecture](docs/architecture.md),
   [trust and boundaries](docs/trust.md), the [glossary](docs/glossary.md).
 - **Why and how it was built:** [the story](docs/story.md),
@@ -128,7 +129,7 @@ and the whole walk from download to a first conversation in
 ## Licence
 
 Code under the GNU AGPL, version 3 or later; documentation under CC BY-SA
-4.0. The sample handbooks (`handbooks/`) and the diagram template
+4.0. The handbook index (`handbooks/`) and the diagram template
 (`guides/boring-diagrams/TEMPLATE.dot`) are public domain (CC0). What you
 make with the tools is yours. Details and the exact terms:
 [COPYING.md](COPYING.md).

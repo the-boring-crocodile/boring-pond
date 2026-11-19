@@ -15,7 +15,10 @@ On a Windows dev box, the recommended setup connects Copilot directly to core
 and Knowledge, with the other selected services behind Ferry. This keeps
 workspace tools and shared lessons immediately available while specialist
 tools are discovered as needed. Ferry routes calls; each backend still owns
-its work and data. See [pondNT setup](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md)
+its work and data. The normal services start as the person at desktop logon;
+only core and the four D365 servers request elevation. An optional, independent
+tunnel window runs separate server copies and reconnects SSH without restarting them.
+See [pondNT setup](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/INSTALL.md)
 and [the gateway trade-off](https://github.com/the-boring-crocodile/boring-services/blob/main/mcp-ferry/README.md#gateways-optional).
 
 ## The path of one command
@@ -46,12 +49,23 @@ are in [Crocodile's OAuth guide](https://github.com/the-boring-crocodile/boring-
 
 ## Packages
 
-Pond Common owns file-core, registry, service-kit, worker-kit and the shared
-Linux deployment engine.
-Crocodile uses the first four at runtime; Pirates uses file-core, registry and worker-kit;
-pondNT uses file-core, registry and service-kit; the services use registry and
-service-kit. Worker-kit is Linux-specific. Common does not import applications.
-Crocodile's task-state package has one maintained consumer and remains there.
+Pond Common owns these packages; it does not import applications:
+
+| Package | Responsibility |
+|---|---|
+| boring-outcomes | Typed refusals and failures with JSON details |
+| boring-file-core | File operations and format handling |
+| boring-registry | Registration and availability |
+| boring-service-kit | Service authentication and MCP helpers |
+| boring-worker-kit | Linux task, file and service clients |
+| boring-deploy | Linux release preparation, switching and recovery |
+
+Crocodile uses outcomes, file-core, registry, service-kit and worker-kit.
+Pirates uses outcomes, file-core, registry and worker-kit; pondNT uses
+outcomes, file-core, registry and service-kit. Services use registry and
+service-kit. The Linux installers for Crocodile, Pirates and Services,
+including the tunnel, use boring-deploy. Worker-kit is Linux-specific. Crocodile's task-state module
+has one maintained consumer and remains there.
 
 Repository, package, image and deployment boundaries are distinct. Services
 remain one repository with four specialist services plus Ferry, each with an

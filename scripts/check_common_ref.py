@@ -19,12 +19,12 @@ bundles names it too.
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 FAMILY = Path(__file__).resolve().parents[2]
 COMMON = FAMILY / "boring-pond-common"
 CONSUMERS = ("boring-crocodile", "boring-pirates", "boring-services", "boring-pondnt")
-PINNED = re.compile(r"^boring-(?:registry|file-core|service-kit|worker-kit|deploy)==(\S+)", re.M)
 
 
 def git(repo: Path, *args: str) -> str:
@@ -52,12 +52,18 @@ def problems(repo: str) -> list[str]:
     try:
         ref = frozen_ref(root, ".common-ref", COMMON)
         version = git(COMMON, "show", f"{ref}:VERSION").strip()
+        manifests = [p for p in git(COMMON, "ls-tree", "-r", "--name-only", ref, "--", "packages").splitlines()
+                     if len(Path(p).parts) == 3 and p.endswith("/pyproject.toml")]
+        names = [tomllib.loads(git(COMMON, "show", f"{ref}:{p}"))["project"]["name"] for p in manifests]
+        if not names:
+            raise ValueError(f"{COMMON.name}: no packages in {ref[:7]}")
+        pinned_pattern = re.compile(r"^(?:" + "|".join(map(re.escape, names)) + r")==(\S+)", re.M)
         if repo == "boring-pondnt":
             frozen_ref(root, ".services-ref", FAMILY / "boring-services")
     except (ValueError, subprocess.CalledProcessError) as error:
         return [f"{repo}: dependency ref failed: {error}"]
     locks = [p for p in git(root, "ls-files").split() if p.endswith(".lock") and not p.startswith("pond/")]
-    pinned = {v for p in locks for v in PINNED.findall((root / p).read_text(encoding="utf-8"))}
+    pinned = {v for p in locks for v in pinned_pattern.findall((root / p).read_text(encoding="utf-8"))}
     if not pinned:
         return [f"{repo}: no Common package pinned in {locks}"]
     if pinned != {version}:

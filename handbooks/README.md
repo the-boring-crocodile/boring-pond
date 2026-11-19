@@ -11,43 +11,36 @@ works that way from its first conversation.
 
 | Sample | For | How it works | Handbook |
 |---|---|---|---|
-| **The Engineer** | Code, systems, releases | Builds things that hold, says plainly what it has not checked | [the Steady Beaver](steady-beaver/HANDBOOK.md) `('')##=` |
-| **The Consultant** | Research and concepts: finding out, thinking through, writing up | Looks until it sees clearly, then answers once; every finding has a place, a source and a date | [the Tidy Kingfisher](tidy-kingfisher/HANDBOOK.md) `--<o)` |
+| **The Engineer** | Code, systems, releases | Builds things that hold, says plainly what it has not checked | [the Steady Beaver](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/src/boring_crocodile/handbooks/engineer/HANDBOOK.md) `('')##=` |
+| **The Consultant** | Research and concepts: finding out, thinking through, writing up | Looks until it sees clearly, then answers once; every finding has a place, a source and a date | [the Tidy Kingfisher](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/src/boring_crocodile/handbooks/consultant/HANDBOOK.md) `--<o)` |
 
-Each handbook has a character of its own, named in the last column; the
-examples below and in [getting started](../docs/getting-started.md) use
-those names (`beaver-user`, `steady-beaver/`). Keep the character or rename
+Each handbook has a character of its own, named in the last column. The
+examples below use `beaver-user` and `engineer`; [getting started](../docs/getting-started.md)
+uses `crocodile-user` and the neutral starter. Keep the character or rename
 it as the Pond becomes yours.
 
-Each folder holds two files: `HANDBOOK.md` and a short `WELCOME.md` that tells
-the AI to read it and how to say it is ready. Neither is a copy of a handbook
-in use.
+The Crocodile release owns and ships these files. This repository keeps the
+index and links. Each packaged choice has `HANDBOOK.md`, `WELCOME.md` and
+the shared [Operating this Pond together](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/src/boring_crocodile/handbooks/OPERATING_TOGETHER.md)
+page. None is a copy of a handbook in use.
 
 ## Installing one
 
-**A new Pond.** Give setup the folder as the starting context. In the inputs
-file for the first Pond (or for `--add-pond`), instead of the packaged starter:
+**A new Pond.** Run `sudo boring-crocodile-setup --wizard --apply` and choose
+`starter`, `engineer` or `consultant` at the handbook question. The release
+supplies those files: no clone or JSON file is needed. For another Pond, use
+`--add-pond NAME --wizard --apply`; the site's controller is reused.
 
-```json
-{
-  "execution_user": "beaver-user",
-  "control_user": "crocodile-mcp",
-  "home": "/home/beaver-user",
-  "context_mode": "import",
-  "context_source": "/path/to/boring-pond/handbooks/steady-beaver",
-  "context_files": ["HANDBOOK.md", "WELCOME.md"]
-}
-```
-
-Setup copies both files into the Pond's `handbook/` and configures them as its
-context. The whole walk from download to a first conversation:
+Setup seeds missing files in the Pond's `handbook/` and records their reading
+order and welcome filename. Existing files remain yours and are never replaced
+by a setup rerun or software update. Importing your own selected files and saving
+optional setup inputs remain available. The full walk:
 [getting started](../docs/getting-started.md).
 
-**An existing Pond.** Copy both files into its `handbook/`, keep the old
-documents in an archive, and have the administrator set the Pond's context
-files to `["HANDBOOK.md", "WELCOME.md"]` and reload
-([context configuration](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/TOOLS.md#context-pond_bootstrap-pond_profile-pond_ping-pond_limits),
-[changing configuration](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/OPERATIONS.md#changing-configuration)).
+**An existing Pond.** Changing its handbook is a deliberate content change:
+keep an archive, review the selected release-owned files and context settings,
+and follow [context configuration](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/TOOLS.md#context-pond_bootstrap)
+and [changing configuration](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/OPERATIONS.md#changing-configuration).
 
 ## The first conversation
 

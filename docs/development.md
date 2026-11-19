@@ -14,9 +14,9 @@ for r in boring-pond boring-pond-common boring-crocodile boring-pirates boring-s
 done
 ```
 
-You need Python 3.10 or newer (the code supports 3.10 to 3.14; only a
-production deploy asks for 3.11), [uv](https://docs.astral.sh/uv/) and Git;
-the diagrams also want Graphviz. The maintained checks create fresh environments.
+You need Python 3.12 or newer (the code supports 3.12 to 3.14),
+[uv](https://docs.astral.sh/uv/) and Git; the diagrams also want Graphviz.
+Ubuntu 22.04 needs a newer Python than its system interpreter. The maintained checks create fresh environments.
 They need access to the package index or a populated cache; native Windows,
 systemd and browser acceptance still require their respective platforms.
 
@@ -90,16 +90,23 @@ stay unchanged. Common's own check still tests the current Common checkout.
 It checks the runner, documents (every link resolves), licences (`reuse lint`
 and package licence copies), dependency refs and, in the private
 working copies, that no private name appears in any product tree, then runs the component
-checks and prints one summary. Exit 0 means all of it passed. `--only` selects
-checks. `--common-wheels DIST` uses an explicit distribution instead of
+checks and builds the selected consumers' release packages with their own
+scripts: Crocodile and Pirates Linux artifacts, all five Services Linux artifacts,
+and the pondNT Windows zip. Builds use the same Common wheels and pondNT's
+recorded Services checkout. Each build has its own temporary output directory,
+removed on exit, and its own timed summary entry. A build failure fails the check.
+Exit 0 means all of it passed. `--only` selects checks and their release builds. `--common-wheels DIST` uses an explicit distribution instead of
 building; the consumers still enforce their wheel hashes.
 
 The component checks run on the runner's own Python unless told otherwise.
 `--python PY [PY ...]` runs each component check once per interpreter (the
-family's own checks and the Common build use the first); `--ci-pythons` takes
-the Pythons of the CI matrices, 3.14, 3.12 and 3.10, as `uv python find`
-reports them. Run that before a release: a 3.14-only pass has missed a test
-that hung on 3.12 and a real bug on 3.10.
+family's own checks, Common build and release builds use the first). Linux
+release builds target that first interpreter's version; pondNT's build script
+pins its Windows runtime. Release builds run once, while tests cover each
+selected interpreter. `--ci-pythons` takes
+the Pythons of the CI matrices, 3.14 and 3.12, as `uv python find`
+reports them. Run that before a release: a pass on one interpreter can miss
+failures on another.
 
 ```bash
 python boring-pond/scripts/check.py --ci-pythons

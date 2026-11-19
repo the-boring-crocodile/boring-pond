@@ -47,6 +47,36 @@ raise SystemExit(7 if os.environ.get('FAMILY_TEST_OWNER_FAIL') == name else 0)
 """
 
 
+RELEASE = """import argparse, json, os, sys
+from pathlib import Path
+p = argparse.ArgumentParser()
+p.add_argument('--common-wheels', type=Path, required=True)
+p.add_argument('--out', type=Path, required=True)
+p.add_argument('--python-version')
+p.add_argument('--target')
+p.add_argument('--services-root', type=Path)
+args = p.parse_args()
+name = Path.cwd().name
+assert (args.common_wheels / 'VERSION').read_text() == Path('expected').read_text()
+bundle = None
+if name == 'boring-pondnt':
+    assert args.python_version is None and args.target is None
+    bundle = (args.services_root / 'bundle').read_text()
+    assert bundle == 'accepted bundle'
+else:
+    assert args.python_version == '%d.%d' % sys.version_info[:2]
+    assert args.services_root is None
+    assert args.target == ('linux' if name == 'boring-services' else None)
+if name == 'boring-services':
+    assert Path('bundle').read_text() == 'current, incompatible bundle'
+with open(os.environ['FAMILY_TEST_AUDIT'], 'a') as f:
+    f.write(json.dumps(['release', name, sys.executable, args.python_version, args.target, bundle]) + '\\n')
+args.out.mkdir()
+(args.out / 'artifact').write_text('built by the owner')
+raise SystemExit(8 if os.environ.get('FAMILY_TEST_RELEASE_FAIL') == name else 0)
+"""
+
+
 def git(root, *args):
     return subprocess.run(['git', '-C', str(root), *args], check=True,
                           capture_output=True, text=True).stdout.strip()
@@ -78,6 +108,7 @@ class FamilyCheckTests(unittest.TestCase):
             git(root, 'config', 'user.email', 'fixture@example.test')
         self.common = self.family / 'boring-pond-common'
         write(self.common, 'scripts/build.py', BUILD)
+        write(self.common, 'packages/boring-registry/pyproject.toml', '[project]\nname = "boring-registry"\n')
         self.commits = {}
         for version in ('0.7.8', '0.7.10'):
             write(self.common, 'VERSION', version)
@@ -93,6 +124,9 @@ class FamilyCheckTests(unittest.TestCase):
             write(root, 'requirements.lock', 'boring-registry==' + version + '\n')
             write(root, 'expected', version)
             write(root, 'scripts/check.py', OWNER)
+            write(root, 'scripts/build.py', RELEASE)
+            if name in ('crocodile', 'pirates'):
+                write(root, 'tests/fixtures/admin-list.json', json.dumps({'ponds': ['pond', 'garden'], 'pirates': {'parrot': 1300}}))
             if name == 'pondnt':
                 write(root, '.services-ref', self.services_ref + '\n')
             commit(root)
@@ -152,8 +186,7 @@ class FamilyCheckTests(unittest.TestCase):
         write(dist, 'VERSION', '0.7.10')
         result, _ = self.run_check('--common-wheels', str(dist), '--only', 'crocodile', 'services')
         self.assertEqual(result, 0)
-        self.assertEqual(len(self.events()), 2)
-        self.assertTrue(all(e[0] == 'owner' for e in self.events()))
+        self.assertEqual([e[0] for e in self.events()], ['owner', 'owner', 'release', 'release'])
         self.assert_untouched()
 
     def test_missing_moving_and_lock_mismatched_refs_fail_before_builds(self):
@@ -169,6 +202,22 @@ class FamilyCheckTests(unittest.TestCase):
         result, _ = self.run_check('--only', 'pondnt')
         self.assertEqual(result, 1)
         self.assertEqual(self.events(), [])
+
+    def test_common_packages_come_from_the_selected_commit(self):
+        root = self.family / 'boring-pirates'
+        for name in ('boring-outcomes', 'boring-future-kit'):
+            with self.subTest(name=name):
+                manifest = f'packages/{name}/pyproject.toml'
+                write(self.common, manifest, f'[project]\nname = "{name}"\n')
+                selected = commit(self.common)
+                write(root, '.common-ref', selected + '\n')
+                # Neither HEAD nor the working tree declares this package now.
+                (self.common / manifest).unlink()
+                commit(self.common)
+                write(root, 'requirements.lock', f'boring-registry==0.7.10\n{name}==0.7.8\n')
+                self.assertIn('the locks pin 0.7.10, 0.7.8', refs.problems(root.name)[0])
+                write(root, 'requirements.lock', f'boring-registry==0.7.10\n{name}==0.7.10\n')
+                self.assertEqual(refs.problems(root.name), [])
 
     def test_names_check_is_skipped_without_private_records(self):
         result, output = self.run_check('--only', 'names')
@@ -201,6 +250,29 @@ class FamilyCheckTests(unittest.TestCase):
         self.assertIn(f'crocodile@{version}', output)
         self.assert_untouched()
 
+    def test_release_builds_run_once_on_first_python_and_use_checked_inputs(self):
+        result, output = self.run_check('--only', *runner.CONSUMERS,
+                                        '--python', sys.executable, sys.executable)
+        self.assertEqual(result, 0)
+        builds = [e for e in self.events() if e[0] == 'release']
+        self.assertEqual([e[1] for e in builds], [runner.CHECKS[n][0] for n in runner.CONSUMERS])
+        self.assertTrue(all(e[2] == sys.executable for e in builds))
+        self.assertEqual(len([e for e in self.events() if e[0] == 'owner']), 8)
+        for name in runner.CONSUMERS:
+            self.assertIn(f'build-{name}', output)
+        self.assert_untouched()
+
+    def test_each_release_failure_fails_the_family_and_other_builds_still_run(self):
+        for failed in runner.CONSUMERS:
+            with self.subTest(failed=failed):
+                self.audit.unlink(missing_ok=True)
+                with patch.dict(os.environ, FAMILY_TEST_RELEASE_FAIL=runner.CHECKS[failed][0]):
+                    result, output = self.run_check('--only', *runner.CONSUMERS)
+                self.assertEqual(result, 1)
+                self.assertIn('FAILED (8)', output)
+                self.assertEqual(len([e for e in self.events() if e[0] == 'release']), 4)
+                self.assert_untouched()
+
     def test_ci_pythons_without_uv_is_refused_before_effects(self):
         with patch.dict(os.environ, {'UV': '', 'PATH': ''}):
             result, output = self.run_check('--only', 'crocodile', '--ci-pythons')
@@ -209,66 +281,156 @@ class FamilyCheckTests(unittest.TestCase):
         self.assertEqual(self.events(), [])
 
 
-class ReleaseSetTests(unittest.TestCase):
-    """check_docs: versions pinned in copy-paste blocks follow updating.md's release set table."""
+class AdminInventoryContractTests(unittest.TestCase):
+    def test_mismatched_or_missing_consumer_example_stops_family_preflight(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(runner, "FAMILY", Path(tmp)):
+            for repo in ("boring-crocodile", "boring-pirates"):
+                write(Path(tmp) / repo, "tests/fixtures/admin-list.json", '{"ponds":["pond"],"pirates":{}}')
+            runner.admin_inventory_contract()
+            consumer = Path(tmp) / "boring-pirates/tests/fixtures/admin-list.json"
+            consumer.write_text('{"ponds":["different"],"pirates":{}}')
+            with self.assertRaisesRegex(ValueError, "examples differ"):
+                runner.inputs(["pirates"], None)
+            consumer.unlink()
+            with self.assertRaisesRegex(ValueError, "missing or invalid"):
+                runner.inputs(["pirates"], None)
+
+
+class ReleasePlaceholderTests(unittest.TestCase):
+    """Download recipes identify the published component and version."""
 
     def setUp(self):
-        self.repo = Path(tempfile.mkdtemp()) / 'boring-pond'
-        (self.repo / 'docs').mkdir(parents=True)
-        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.repo.parent)], check=True))
-        (self.repo / 'docs' / 'updating.md').write_text(
-            '| Crocodile | x | `v1.2.3` | y |\n| Pirates | x | `v0.9.0` | y |\n| Services | x | e.g. `canvas-v0.2.1` | y |\n'
-            '\n    CROCODILE=1.2.3 PIRATES=0.9.0 CANVAS=0.2.1\n')
-        subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
-
-    def hits(self, page):
-        (self.repo / 'docs' / 'start.md').write_text(page)
-        subprocess.run(['git', 'add', '-A'], cwd=self.repo, check=True)
-        return docs.release_set_hits(self.repo)
-
-    def test_matching_pins_pass(self):
-        self.assertEqual(self.hits('```bash\nV=1.2.3\n```\n'), [])
-
-    def test_a_stale_pin_is_named(self):
-        found = self.hits('```bash\nV=1.2.2\n```\n')
-        self.assertEqual(len(found), 1)
-        self.assertIn('docs/start.md:2: V=1.2.2, the release set says 1.2.3', found[0])
-
-    def test_other_repositories_are_not_checked(self):
-        other = self.repo.parent / 'boring-crocodile'
-        other.mkdir()
-        self.assertEqual(docs.release_set_hits(other), [])
-
-
-class ServicesSetTests(unittest.TestCase):
-    """check_docs: boring-services' V=X S=NAME blocks follow the release set sentence in boring-pond."""
-
-    def setUp(self):
-        self.family = Path(tempfile.mkdtemp())
-        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.family)], check=True))
-        (self.family / 'boring-pond' / 'docs').mkdir(parents=True)
-        (self.family / 'boring-pond' / 'docs' / 'updating.md').write_text(
-            'The current release set: Crocodile 1.0.0,\nPirates 0.1.0, Canvas 0.2.19, Knowledge 0.2.15, Fishmarket\n0.1.14 and Ferry 0.1.3.\n')
-        self.repo = self.family / 'boring-services'
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.repo = Path(self.temp.name) / 'boring-pond'
         self.repo.mkdir()
         subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
-        old, docs.FAMILY = docs.FAMILY, self.family
-        self.addCleanup(lambda: setattr(docs, 'FAMILY', old))
 
-    def hits(self, page):
-        (self.repo / 'README.md').write_text(page)
-        subprocess.run(['git', 'add', '-A'], cwd=self.repo, check=True)
-        return docs.services_set_hits(self.repo)
+    def hits(self, text, rel='README.md'):
+        page = self.repo / rel
+        page.parent.mkdir(parents=True, exist_ok=True)
+        page.write_text(text)
+        subprocess.run(['git', 'add', '--', rel], cwd=self.repo, check=True)
+        return docs.release_pin_hits(self.repo)
 
-    def test_matching_and_line_broken_versions_pass(self):
-        self.assertEqual(self.hits('    V=0.2.19 S=canvas D=x\n    V=0.1.14 S=fishmarket\n'), [])
+    def test_placeholders_need_no_release_table(self):
+        self.assertEqual(self.hits('    V=VERSION S=canvas\n    CROCODILE=VERSION PIRATES=VERSION CANVAS=VERSION\n'), [])
 
-    def test_a_stale_service_pin_is_named(self):
-        found = self.hits('    V=0.2.18 S=canvas\n')
-        self.assertEqual(found, ['boring-services/README.md:1: canvas 0.2.18, the release set says 0.2.19'])
+    def test_bash_release_pin_must_match_the_named_recipe(self):
+        rel = 'docs/getting-started.md'
+        self.assertEqual(self.hits('    V=0.5.0\n', rel), [])
+        found = self.hits('    V=0.5.0rc21\n', rel)
+        self.assertEqual(found, [f'boring-pond/{rel}:1: V=0.5.0rc21, the release set says 0.5.0'])
 
-    def test_a_service_missing_from_the_set_is_named(self):
-        self.assertIn('no sourcecache-d365 version', self.hits('    V=0.1.18 S=sourcecache-d365\n')[0])
+    def test_quoted_and_powershell_candidate_pins_are_named(self):
+        for line in ('V="1.2.3"', "$v = '1.2.3rc1'", "$tag = 'v1.2.3-rc.1'",
+                     'CROCODILE=v1.2.3-rc.1'):
+            with self.subTest(line=line):
+                self.assertEqual(len(self.hits(line)), 1)
+
+    def test_service_recipe_is_checked_without_a_service_roster(self):
+        self.assertEqual(len(self.hits('    V=1.2.3 S=some-new-service\n')), 1)
+
+    def test_literal_release_download_url_is_named(self):
+        for tag in ('v1.2.3', 'canvas-v1.2.3'):
+            with self.subTest(tag=tag):
+                self.assertEqual(len(self.hits('curl https://github.com/example/project/releases/download/' + tag + '/asset')), 1)
+
+    def test_history_dependencies_and_host_versions_are_not_download_pins(self):
+        self.assertEqual(self.hits('Historical Crocodile 0.4.21.\nCommon >=0.8,<0.9.\nglibc 2.39 and port 18520.\n'), [])
+
+    def test_variable_download_url_is_allowed(self):
+        self.assertEqual(self.hits('curl "$gh/releases/download/v$V/$f"\n'), [])
+
+    def test_service_pins_follow_the_service_name(self):
+        self.repo.rename(self.repo.with_name('boring-services'))
+        self.repo = self.repo.with_name('boring-services')
+        self.assertEqual(self.hits('    V=0.2.0 S=mcp-ferry\n    V=0.3.0 S=canvas\n'), [])
+        self.assertEqual(len(self.hits('    V=0.3.0 S=mcp-ferry\n')), 1)
+
+    def test_windows_tag_uses_the_release_prefix(self):
+        self.repo.rename(self.repo.with_name('boring-pondnt'))
+        self.repo = self.repo.with_name('boring-pondnt')
+        rel = 'docs/INSTALL.md'
+        self.assertEqual(self.hits("    $v = '0.3.0'; $tag = 'v0.3.0'\n", rel), [])
+        self.assertEqual(len(self.hits("    $v = '0.3.0'; $tag = '0.3.0'\n", rel)), 1)
+
+
+class UnicodeEscapeTests(unittest.TestCase):
+    def setUp(self):
+        self.repo = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: subprocess.run(['rm', '-rf', str(self.repo)], check=True))
+        subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
+
+    def hits(self, text):
+        page = self.repo / 'README.md'
+        page.write_text(text, encoding='utf-8')
+        subprocess.run(['git', 'add', '--', 'README.md'], cwd=self.repo, check=True)
+        return docs.unicode_hits(self.repo)
+
+    def test_accidental_escape_is_named_with_its_line(self):
+        found = self.hits('Title\n' + r'release\u2019s notes' + '\n')
+        self.assertEqual(len(found), 1)
+        self.assertIn('README.md:2: literal Unicode escape in Markdown', found[0])
+
+    def test_code_blocks_are_checked_too(self):
+        found = self.hits('~~~json\n' + r'{"text":"\u2019"}' + '\n~~~\n')
+        self.assertEqual(len(found), 1)
+
+    def test_real_unicode_character_is_accepted(self):
+        self.assertEqual(self.hits('The release’s notes.\n'), [])
+
+    def test_extra_markdown_page_uses_the_same_guard(self):
+        page = self.repo / 'extra.md'
+        page.write_text(r'wrong \u0027', encoding='utf-8')
+        self.assertEqual(len(docs.markdown_escape_hits(page, 'extra.md')), 1)
+
+
+class DiagramCaptionTests(unittest.TestCase):
+    """Both rendered themes have versionless captions; dated maps keep their evidence label."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.repo = Path(self.temp.name) / 'boring-pond'
+        (self.repo / 'docs').mkdir(parents=True)
+        subprocess.run(['git', 'init', '-q'], cwd=self.repo, check=True)
+
+    def write_svg(self, stem, subtitle, note=''):
+        (self.repo / 'docs' / (stem + '.svg')).write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg"><text>Title</text>'
+            f'<text>{subtitle}</text><text>{note}</text></svg>')
+        subprocess.run(['git', 'add', '--', 'docs/' + stem + '.svg'], cwd=self.repo, check=True)
+
+    def pair(self, subtitle, note=''):
+        for stem in ('example', 'example-dark'):
+            self.write_svg(stem, subtitle, note)
+
+    def test_versionless_pair_needs_no_manifest_or_release_table(self):
+        self.pair('Container view · source architecture')
+        self.assertEqual(docs.diagram_version_hits(self.repo), [])
+
+    def test_only_versioned_dark_caption_is_named(self):
+        self.pair('Container view · Crocodile')
+        self.write_svg('example-dark', 'Container view · Crocodile 1.2.3')
+        self.assertEqual(docs.diagram_version_hits(self.repo),
+                         ['boring-pond/docs/example-dark.svg: release number in diagram caption'])
+
+    def test_split_graphviz_caption_and_candidates_are_checked(self):
+        self.pair('Dynamic view', 'Crocodile 1.2.3rc1')
+        self.assertEqual(len(docs.diagram_version_hits(self.repo)), 2)
+
+    def test_malformed_tracked_svg_is_reported(self):
+        self.write_svg('broken', 'view')
+        (self.repo / 'docs' / 'broken.svg').write_text('<svg>')
+        self.assertIn('cannot read diagram', docs.diagram_version_hits(self.repo)[0])
+
+    def test_our_site_has_no_special_caption_rule(self):
+        self.write_svg('our-site', 'Topology')
+        self.assertEqual(docs.diagram_version_hits(self.repo), [])
+        self.write_svg('our-site', 'Topology 1.2.3')
+        self.assertEqual(docs.diagram_version_hits(self.repo),
+                         ['boring-pond/docs/our-site.svg: release number in diagram caption'])
 
 
 class DocAnchorTests(unittest.TestCase):
@@ -308,6 +470,48 @@ class DocAnchorTests(unittest.TestCase):
 
     def test_repository_without_checkout_is_not_judged(self):
         self.assertEqual(self.hits('[a](https://github.com/the-boring-crocodile/unknown#x)'), [])
+
+
+class UpgradeCommandTest(unittest.TestCase):
+    def test_published_blocks_stop_at_download_unpack_preflight_and_deploy_failures(self):
+        page = Path(__file__).resolve().parents[1] / 'docs/updating.md'
+        blocks, current = [], []
+        for line in [*page.read_text().splitlines(), '']:
+            if line.startswith('    '):
+                current.append(line[4:])
+            elif current:
+                blocks.append('\n'.join(current))
+                current = []
+        download, = [b for b in blocks if 'get()' in b]
+        preflight, = [b for b in blocks if '/deploy --check' in b and 'set -eu' not in b]
+        deploy, = [b for b in blocks if 'boring-pirates-$PIRATES/deploy --check' in b and 'set -eu' in b]
+        prefix = r'''
+record() { printf '%s|\n' "$*" >> "$AUDIT"; case "$*|" in *"$FAIL"*) return 7;; esac; }
+curl() { record "curl $*"; }
+sha256sum() { record "sha256sum $*"; }
+sudo() { record "sudo $*"; }
+mkdir() { :; }
+cd() { :; }
+CROCODILE=0.5.0 PIRATES=0.4.0 CANVAS=0.3.0
+'''
+        cases = [(download, 'curl -fLO https://github.com/the-boring-crocodile/boring-crocodile/',
+                  'sudo tar', 'download'),
+                 (download, 'sudo tar xzf boring-crocodile-', 'sudo tar xzf boring-pirates-', 'first unpack'),
+                 (download, 'sudo tar xzf boring-pirates-', 'sudo tar xzf boring-canvas-', 'second unpack'),
+                 (preflight, 'boring-crocodile-0.5.0/deploy --check', 'boring-pirates-0.4.0', 'preflight'),
+                 (deploy, 'boring-crocodile-0.5.0/deploy|', 'boring-pirates-0.4.0', 'first deploy'),
+                 (deploy, 'boring-pirates-0.4.0/deploy --check', 'boring-pirates-0.4.0/deploy|', 'Pirates check'),
+                 (deploy, 'boring-pirates-0.4.0/deploy|', 'boring-canvas-0.3.0/deploy', 'second deploy')]
+        with tempfile.TemporaryDirectory() as tmp:
+            audit = Path(tmp) / 'calls'
+            for block, fail, later, label in cases:
+                with self.subTest(stage=label):
+                    audit.write_text('')
+                    run = subprocess.run(['bash'], input=prefix + block, text=True,
+                                         capture_output=True, env=dict(os.environ, AUDIT=str(audit), FAIL=fail))
+                    self.assertEqual(run.returncode, 7, run.stderr)
+                    self.assertIn(fail, audit.read_text())
+                    self.assertNotIn(later, audit.read_text())
 
 
 if __name__ == '__main__':

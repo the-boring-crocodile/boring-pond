@@ -63,15 +63,15 @@
 <text x="377" y="488" font-size="10">Source search</text>
 <rect x="25" y="525" width="650" height="40" fill="#edf5ef" stroke="#7a9783" stroke-width="1.2"/>
 <text x="40" y="542" font-size="12" font-weight="bold">boring-pond-common</text>
-<text x="40" y="556" font-size="10">Shared packages underneath: registry, service kit, file core; on Linux also worker kit and deploy</text>
+<text x="40" y="556" font-size="10">Shared packages: outcomes, registry, service kit, file core; on Linux also worker kit and deploy</text>
 <text x="25" y="602" font-size="12" font-weight="bold">Read the picture</text>
 <text x="25" y="620" font-size="10" fill="#526c91">Pale blue box, innermost: you, with your AI client.</text>
-<text x="25" y="632" font-size="10">Frame around it: what that client reaches.</text>
-<text x="25" y="644" font-size="10">Overlap: how each side reaches the services.</text>
-<text x="25" y="656" font-size="10">Pictograms repeat the type.</text>
+<text x="25" y="636" font-size="10">Frame around it: what that client reaches.</text>
+<text x="25" y="652" font-size="10">Overlap: how each side reaches the services.</text>
+<text x="25" y="668" font-size="10">Pictograms repeat the type.</text>
 <text x="380" y="602" font-size="12" font-weight="bold">Scope and limits</text>
 <text x="380" y="620" font-size="10">Recommended pondNT access; optional tools omitted.</text>
-<text x="380" y="632" font-size="10">Direct service access is also supported.</text>
-<text x="380" y="644" font-size="10">For call paths, see the site context and setup guides.</text>
+<text x="380" y="636" font-size="10">Direct service access is also supported.</text>
+<text x="380" y="652" font-size="10">For call paths, see the site context and setup guides.</text>
 </g>
 </svg>

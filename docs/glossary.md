@@ -29,7 +29,7 @@ The family uses house names. Each one, with what it plainly is:
 | **issuer** | the OAuth authorization server inside a server (Crocodile or a lone service): who may sign in, approval, tokens | boring-service-kit |
 | **site** | one host's Crocodile with its Ponds, services and Pirates; *activated* once, which writes its configuration and systemd units | boring-crocodile |
 | **handbook** | what the AI reads at the start of every conversation in a Pond: its welcome, agreement and project context; pondNT's core hands over its `bootstrap.md` the same way | boring-crocodile, boring-pondnt |
-| **guest** | a Pirate registered with a Pond that accepts guests; an operator can enable this at activation or later with [`--site-render --guests`](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/docs/OPERATIONS.md#updating) | boring-crocodile |
+| **guest** | a Pirate registered with a Pond; every enabled Pond has reception, and the operator admits each Pirate explicitly | boring-crocodile |
 | **service token** | what a Pond or a Pirate calls a service with; issued by the Crocodile | boring-crocodile |
 | **access key** | on pondNT, the per-server credential sent by an authorized caller (the client for a direct server, Ferry for a backend) | boring-pondnt |
 | `<^==>` | the Crocodile | everywhere |
