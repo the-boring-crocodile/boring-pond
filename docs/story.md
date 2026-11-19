@@ -54,7 +54,7 @@ agreement that changes only with the person's yes. A rule the agent
 inherits at the first line of a conversation does not have to be
 rediscovered, renegotiated or remembered by anyone. That is how the family
 could hold itself to one standard from its first commit instead of tidying
-up afterwards. The Engineer's handbook, [the Steady Beaver](../handbooks/steady-beaver/HANDBOOK.md),
+up afterwards. The Engineer's handbook, [the Steady Beaver](https://github.com/the-boring-crocodile/boring-crocodile/blob/main/src/boring_crocodile/handbooks/engineer/HANDBOOK.md),
 is that standard, rewritten for someone else to start from.
 
 None of this is a new idea, and the pieces have names now. Anthropic's
@@ -267,10 +267,13 @@ with something it actually caught:
 
 One thing is not proven, and we say so. pondNT exists to make Copilot in
 Visual Studio cheaper and faster through fewer, better tool calls; that is a
-hypothesis until it is measured. That it works is not in question: before a
-pondNT release is called done, its full test suite runs from the release zip
-on an Azure D365 dev VM, which then does real D365 work with it. The hosted
-CI on GitHub runs the platform-neutral tests on Linux; it has no D365.
+hypothesis until it is measured. That it works is tested, not assumed:
+before a pondNT release is called done, its test suite runs from the release
+zip on a Windows D365 dev VM, and so do the upgrade from the last published
+release and the way back. For 0.3.0, an AI agent also updated an older
+installation on a second box from the pages alone. GitHub CI runs the
+platform-neutral tests on Linux; it has no D365.
+[What was tested where](https://github.com/the-boring-crocodile/boring-pondnt/blob/main/docs/EVIDENCE.md#windows-upgrade-and-native-replay-2026-11-19).
 
 If you want to see the method rather than read about it,
 [one release, one evening](case-study.md) follows a single working day,

@@ -13,20 +13,16 @@ install to the last service. Put your own values where these appear.
 | `garden`, `garden-user` | a second Pond and its account, URL `/mcp/garden` | your names |
 | `robin` | the operator, a person: sudo on the host, signs in to services as `robin` | you |
 | `parrot`, `pirate-parrot` | a Pirate and its account | your names |
-| `canvas` | Canvas: web pages at `https://crocodile-url.example.test/canvas/ID`, MCP at `https://crocodile-url.example.test/services/canvas/mcp` (container ports 18510, 18511 on loopback) | |
+| `canvas` | Canvas: web pages at `https://crocodile-url.example.test/services/canvas/canvas/ID`, MCP at `https://crocodile-url.example.test/services/canvas/mcp` (one container listener, port 18511 on loopback) | |
 | `knowledge` | Knowledge at `https://crocodile-url.example.test/services/knowledge/mcp`, port 18512 | |
-| `fishmarket` | Fishmarket at `https://crocodile-url.example.test/fishmarket/mcp` | |
+| `fishmarket` | Fishmarket at `https://crocodile-url.example.test/fishmarket/mcp`; the example keeps its existing public proxy route | |
 | `sourcecache` | Sourcecache at `https://crocodile-url.example.test/services/sourcecache-d365/mcp`, port 18513 | |
 | `knowledge-url.example.test` | a service on its own, signing people in itself | your service's domain |
-| `identity-url.example.test` | an external sign-in (Keycloak, Entra) | your issuer |
 | `devbox`, `203.0.113.7` | a Windows dev box with pondNT, and its public address | your box |
 | `VERSION` | a release version in file names and commands | the version you install |
 
-One exception: [getting started](getting-started.md) installs two sample
-handbooks and names the accounts after their characters. The first Pond is
-still `pond`, but its account is `beaver-user` there and `crocodile-user` in
-the reference pages; the second Pond is `kingfisher` with `kingfisher-user`
-there, `garden` with `garden-user` elsewhere. Account names are free; only
-the first Pond's name is fixed.
+[Getting started](getting-started.md) creates the first Pond with these
+names. [Add a Pond](add-pond.md) uses garden for the next one.
+Account names are free; only the first Pond's URL name is fixed.
 
-A real installation with real names, for comparison: [our site](our-site.md).
+For how we use the parts together, see [our site](our-site.md).

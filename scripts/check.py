@@ -13,11 +13,15 @@ still enforce lock hashes. Common's own check runs on the current checkout.
 --common-wheels DIST uses an explicit distribution instead of building.
 
 Each product check (Common and the consumers) runs once per --python; the
-family's own checks and the Common build use the first. --ci-pythons takes
+family's own checks, the Common build and release builds use the first.
+Selected consumers also build their release packages once, using their own
+scripts and temporary output directories. Linux artifacts target the first
+interpreter's version; pondNT's script pins its Windows runtime. --ci-pythons takes
 the Pythons the public CI matrices use (CI_PYTHONS), found through uv; the
 public CI found what a 3.14-only local run missed (2026-10-31).
 """
 import argparse
+import json
 import os
 import shutil
 from contextlib import ExitStack, contextmanager
@@ -45,7 +49,7 @@ CHECKS = {
 }
 CONSUMERS = ("crocodile", "pirates", "services", "pondnt")
 PRODUCTS = ("common", *CONSUMERS)
-CI_PYTHONS = ("3.14", "3.12", "3.10")  # the products' CI matrices; first one runs the family checks
+CI_PYTHONS = ("3.14", "3.12")  # the products' CI matrices; first one runs the family checks
 
 
 def ci_pythons() -> list[str]:
@@ -62,16 +66,32 @@ def ci_pythons() -> list[str]:
     return found
 
 
+def python_version(python: str) -> str:
+    return subprocess.run([python, "-c", "import sys; print('%d.%d' % sys.version_info[:2])"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+
+
 def label(name: str, python: str, pythons: list[str]) -> str:
     if name not in PRODUCTS or len(pythons) == 1:
         return name
-    version = subprocess.run([python, "-c", "import sys; print('%d.%d' % sys.version_info[:2])"],
-                             capture_output=True, text=True, check=True).stdout.strip()
-    return f"{name}@{version}"
+    return f"{name}@{python_version(python)}"
+
+
+def admin_inventory_contract() -> None:
+    """Producer and consumer pin the same public admin example."""
+    try:
+        examples = [json.loads((FAMILY / repo / "tests/fixtures/admin-list.json").read_text())
+                    for repo in ("boring-crocodile", "boring-pirates")]
+    except (OSError, ValueError) as error:
+        raise ValueError("admin inventory contract fixture missing or invalid") from error
+    if examples[0] != examples[1]:
+        raise ValueError("Crocodile/Pirates admin inventory contract examples differ")
 
 
 def inputs(names: list[str], common_wheels: Path | None) -> tuple[str | None, str | None]:
     """Resolve and validate all selected inputs before starting owner checks."""
+    if "pirates" in names:
+        admin_inventory_contract()
     selected = {name: refs.frozen_ref(FAMILY / CHECKS[name][0], ".common-ref",
                                      FAMILY / "boring-pond-common")
                 for name in names if name in CONSUMERS}
@@ -107,6 +127,20 @@ def command(name: str, python: str, wheels: Path | None, services: Path | None) 
     if name == "pondnt":
         assert services is not None
         cmd += ["--services-root", str(services)]
+    return cmd
+
+
+def build_command(name: str, python: str, wheels: Path, services: Path | None, out: Path) -> list[str]:
+    """Use each selected consumer's release script, with the same checked inputs."""
+    repo = FAMILY / CHECKS[name][0]
+    cmd = [python, str(repo / "scripts/build.py"), "--common-wheels", str(wheels), "--out", str(out)]
+    if name == "pondnt":
+        assert services is not None
+        cmd += ["--services-root", str(services)]
+    else:
+        cmd += ["--python-version", python_version(python)]
+        if name == "services":
+            cmd += ["--target", "linux"]  # the owner's default builds all five services
     return cmd
 
 
@@ -149,6 +183,16 @@ def main() -> int:
                     code = subprocess.run(command(name, python, wheels, services),
                                           cwd=FAMILY / CHECKS[name][0]).returncode
                     results.append((shown, code, time.monotonic() - started))
+            for name in args.only:
+                if name not in CONSUMERS:
+                    continue
+                assert wheels is not None
+                shown = f"build-{name}"
+                print(f"=== {shown}", flush=True)
+                started = time.monotonic()
+                code = subprocess.run(build_command(name, first, wheels, services, tmp / f"release-{name}"),
+                                      cwd=FAMILY / CHECKS[name][0]).returncode
+                results.append((shown, code, time.monotonic() - started))
         print("\n=== summary")
         for name, code, seconds in results:
             print(f"  {name:16} {'passed' if code == 0 else f'FAILED ({code})'}  {seconds:.0f} s")

@@ -1,45 +1,81 @@
-# Pond in a box (prototype)
+# Pond in a box
 
-Try the Pond without installing it on your host: an Ubuntu system container
-with systemd as init, the Pond's homes on a volume, and the components deployed
-inside with their own release artifacts, exactly as on a host. AI clients
-still reach it from outside, so it needs your domain and a reverse proxy with
-TLS in front, as on a host. A native install remains the way to run a Pond
-for real.
+Run the Crocodile inside an Ubuntu system container, with systemd starting
+its workers and tasks. Use a disposable Docker host: this is a way to try
+the installation, not a boundary for untrusted code.
+
+The container shares the host kernel. It needs SYS_ADMIN, unconfined
+AppArmor/seccomp and a writable private cgroup tree. A dedicated VM contains
+the experiment. For an ordinary lasting installation, use
+[Getting started](../docs/getting-started.md).
 
 ## Build and start
 
-    docker build -t pond-box box/
-    docker run -d -t --name pond --hostname pond \
-        --cgroupns=private --cap-add SYS_ADMIN \
-        --security-opt apparmor=unconfined --security-opt seccomp=unconfined \
-        --tmpfs /run --tmpfs /run/lock \
-        -v pond-home:/home -p 127.0.0.1:8503:8503 pond-box
+From this repository's root, on the disposable host:
 
-Why these options: the Crocodile runs every command as the Pond's own account
-in its own systemd unit and cgroup, with a private /tmp and a read-only system
-(`ProtectSystem=`). That needs systemd as PID 1 with a writable cgroup subtree
-(`--cgroupns=private`: only the container's own tree; the image remounts it
-writable) and mount namespaces (CAP_SYS_ADMIN, which Docker's default AppArmor
-and seccomp profiles block). This is far less than `--privileged` (no host
-devices, no other capabilities, the host's cgroup tree stays out of reach),
-but it is not a hardened sandbox: treat the box like a VM you trust, not like
-an application container.
+```bash
+sudo docker build -t pond-box box/
+sudo docker run -d -t --name pond --hostname pond \
+    --cgroupns=private --cap-add SYS_ADMIN \
+    --security-opt apparmor=unconfined --security-opt seccomp=unconfined \
+    --tmpfs /run --tmpfs /run/lock \
+    -v pond-home:/home -p 127.0.0.1:8503:8503 pond-box
+sudo docker exec pond systemctl is-system-running
+```
 
-## Install the Crocodile inside
+The image remounts its cgroup subtree writable before starting systemd.
+The box uses ordinary group modes; no ACL package is needed.
+Inspect a failed unit before continuing if systemd reports degraded.
 
-    docker cp boring-crocodile-VERSION-linux-x86_64.tar.gz pond:/releases/
-    docker exec pond sh -c 'cd /releases && tar xzf boring-crocodile-*.tar.gz \
-        && mkdir /opt/boring-crocodile && ./boring-crocodile-*/deploy --no-backup'
-    docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --wizard --apply
-    docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --site-wizard --apply
+## Install one Pond inside
 
-When the site wizard asks for the local address, answer `0.0.0.0`: Docker
-forwards the published port to the container's own address, not to its
-loopback (the host side stays 127.0.0.1, as published above).
+Download the Crocodile 0.5.0 archive and its checksum from its
+[release page](https://github.com/the-boring-crocodile/boring-crocodile/releases).
+Verify the checksum and read that release's instructions. In the directory
+holding the verified archive, run the following block.
 
-Then the rest of the Crocodile's `docs/INSTALL.md` from step 4 (check and connect), with `docker exec pond`
-in front of each command and the commands' full path
-(`/opt/boring-crocodile/current/bin/boring-crocodile-admin`). The site listens on the published loopback port;
-a reverse proxy with TLS in front of it is the operator's, as on a host.
-Updates are the same deploy with the next artifact.
+```bash
+(
+    set -eu
+    V=0.5.0
+    f=boring-crocodile-$V-linux-x86_64.tar.gz
+    sudo docker cp "$f" pond:/releases/
+    sudo docker exec pond sh -c "cd /releases && tar xzf $f && install -d -m 0755 /opt/boring-crocodile && ./boring-crocodile-$V/deploy --no-backup"
+)
+sudo docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --wizard --apply
+sudo docker exec -it pond /opt/boring-crocodile/current/bin/boring-crocodile-setup --site-wizard --apply
+```
+
+Choose one dedicated account and a packaged handbook. At site activation,
+enter your HTTPS public origin and **0.0.0.0** for the local bind address.
+Docker forwards the published port to the container's network address;
+binding only its loopback would make that route fail. Keep port 8503.
+Review each plan and type APPLY.
+
+## Check and connect
+
+```bash
+sudo docker exec pond /opt/boring-crocodile/current/bin/boring-crocodile-admin site-check
+sudo docker exec pond /opt/boring-crocodile/current/bin/boring-crocodile-admin status --check
+```
+
+Your host's reverse proxy forwards the Crocodile paths to the published
+loopback port. The [proxy section](../docs/getting-started.md#4-connect-the-reverse-proxy)
+owns that configuration; the [client page](../docs/clients.md) owns sign-in.
+Hosted clients still need reachable HTTPS. Read the approval secret in a
+private administrator terminal inside the box, not in chat.
+
+Connect a fresh client to `https://YOUR-DOMAIN/mcp/pond`, bootstrap, and
+ask it to run `id -un; pwd`. Check the intended account and home.
+A local health report does not test the public proxy or client.
+
+## Keep or remove it
+
+Only `/home` is on the named volume. The runtime, site configuration,
+approval secrets and OAuth store are in the container's writable layer.
+Removing the container loses those even if the home volume remains.
+Preserve the whole site before treating any work there as valuable.
+
+Stop it with `sudo docker stop pond`. When finished, the human may remove
+the container and then the `pond-home` volume after inspecting what each
+holds. Return to the [task map](../docs/installation.md) for the next step.

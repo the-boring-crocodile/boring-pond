@@ -9,7 +9,7 @@ decided what to build, tested it, ran it and had the last word.
 - **Documentation** (READMEs, CHANGELOG, `docs/` and other Markdown):
   Creative Commons Attribution-ShareAlike 4.0:
   [LICENSES/CC-BY-SA-4.0.txt](https://github.com/the-boring-crocodile/boring-pond/blob/main/LICENSES/CC-BY-SA-4.0.txt).
-- **Public domain (CC0 1.0):** the sample handbooks (`handbooks/`) and the diagram template (`guides/boring-diagrams/TEMPLATE.dot`). They are meant
+- **Public domain (CC0 1.0):** the handbook index (`handbooks/`) and the diagram template (`guides/boring-diagrams/TEMPLATE.dot`). They are meant
   to become fully yours: [LICENSES/CC0-1.0.txt](https://github.com/the-boring-crocodile/boring-pond/blob/main/LICENSES/CC0-1.0.txt).
 
 [REUSE.toml](https://github.com/the-boring-crocodile/boring-pond/blob/main/REUSE.toml) says which file is under which licence;
